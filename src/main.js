@@ -1,27 +1,28 @@
+import 'assets/less/main.less';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './App';
-import { createStore } from 'redux';
+import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
-import 'assets/less/main.less';
-import reducer from './redux/reducers';
+import store from './store';
+import App from './App';
 
-const store = createStore(reducer);
+/**
+ * Application render.
+ *
+ * @return {Element|Node}
+ * @author Seven Du <shiweidu@outlook.com>
+ */
+const appRender = () => render(
+    <AppContainer>
+        <Provider store={ store }>
+            <App/>
+        </Provider>
+    </AppContainer>,
+    document.querySelector('#root')
+);
 
-const render = Component => {
-    ReactDOM.render(
-        <AppContainer>
-            <Provider store={ store }>
-                <Component/>
-            </Provider>
-        </AppContainer>,
-        document.getElementById('root')
-    );
-};
-
-render(App);
+appRender();
 
 if (module.hot) {
-    module.hot.accept('./App', () => render(App));
+    module.hot.accept('./App', () => appRender());
 }
