@@ -547,6 +547,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                     className={this.props.classes.formControlMargin}
                                     control={
                                         <Switch
+                                            color="primary"
                                             classes={{
                                                 root: this.props.classes.switchHeight,
                                                 default: this.props.classes.switchDefault,

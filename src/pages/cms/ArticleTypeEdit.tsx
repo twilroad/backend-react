@@ -699,6 +699,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                                         }}
                                         control={
                                             <Switch
+                                                color="primary"
                                                 classes={{
                                                     root: this.props.classes.switchHeight,
                                                     default: this.props.classes.switchDefault,
@@ -721,6 +722,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                                         }}
                                         control={
                                             <Switch
+                                                color="primary"
                                                 classes={{
                                                     root: this.props.classes.switchHeight,
                                                     default: this.props.classes.switchDefault,
@@ -745,6 +747,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                                         }}
                                         control={
                                             <Switch
+                                                color="primary"
                                                 classes={{
                                                     root: this.props.classes.switchHeight,
                                                     default: this.props.classes.switchDefault,
@@ -767,6 +770,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                                         }}
                                         control={
                                             <Switch
+                                                color="primary"
                                                 classes={{
                                                     root: this.props.classes.switchHeight,
                                                     default: this.props.classes.switchDefault,
@@ -859,6 +863,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                                                             </TableCell>
                                                             <TableCell className={this.props.classes.tableCell} numeric>
                                                                 <Switch
+                                                                    color="primary"
                                                                     checked={n.status}
                                                                     onChange={this.handleChange(n)}
                                                                     aria-label="n.status"

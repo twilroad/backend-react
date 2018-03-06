@@ -193,7 +193,7 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                     {
                         snackOPen: true,
                         loading: false,
-                        errorMessage: response.data.data.uninstallAddon.message,
+                        errorMessage: response.data.data.uninstallModule.message,
                     },
                 );
                 this.handleClose();

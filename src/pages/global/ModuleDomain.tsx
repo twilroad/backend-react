@@ -154,6 +154,7 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                                                 </TableCell>
                                                 <TableCell numeric>
                                                     <Switch
+                                                        color="primary"
                                                         checked={n.use}
                                                         onChange={this.handleChange(n)}
                                                         aria-label="n.use"

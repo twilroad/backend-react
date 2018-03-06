@@ -84,6 +84,7 @@ class Seo extends React.Component<WithStyles<keyof typeof styles>, State> {
                                     } }
                                     control={
                                         <Switch
+                                            color="primary"
                                             onChange={(event, checked) => this.setState({ debug: checked })}
                                             checked={this.state.debug}
                                         />
@@ -101,6 +102,7 @@ class Seo extends React.Component<WithStyles<keyof typeof styles>, State> {
                                     } }
                                     control={
                                         <Switch
+                                            color="primary"
                                             onChange={(event, checked) => this.setState({ test: checked })}
                                             checked={this.state.test}
                                         />
