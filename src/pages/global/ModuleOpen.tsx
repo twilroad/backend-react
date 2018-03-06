@@ -46,7 +46,7 @@ const styles = {
 };
 type State = {
     open: boolean,
-    modalId: string,
+    modalIdentification: string,
     modalName: string,
     rowsPerPage: number,
     currentPage: number,
@@ -54,91 +54,63 @@ type State = {
     transition: any,
     snackOPen: boolean,
     errorMessage: string,
+    loading: boolean,
 };
 
 class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
-            list: [
-                {
-                    id: 11,
-                    name: '用户中心',
-                    author: 'Mark',
-                    descri: '一键分析项目源码，直观了解项目代码质量，提供代码安全扫描功能',
-                    status: true,
-                },
-                {
-                    id: 12,
-                    name: '商城',
-                    author: 'Mark',
-                    descri: 'fefreg',
-                    status: true,
-                },
-                {
-                    id: 13,
-                    name: '商家',
-                    author: 'Mark',
-                    descri: 'fefreg',
-                    status: false,
-                },
-                {
-                    id: 14,
-                    name: 'CMS',
-                    author: 'Mark',
-                    descri: 'fefreg',
-                    status: false,
-                },
-                {
-                    id: 15,
-                    name: 'Notadd2',
-                    author: 'Mark',
-                    descri: 'fefreg',
-                    status: true,
-                },
-            ],
+            list: [],
             open: false,
-            modalId: '',
+            modalIdentification: '',
             modalName: '',
             rowsPerPage: 3,
             currentPage: 0,
             transition: undefined,
             snackOPen: false,
             errorMessage: '',
+            loading: false,
         };
     }
-    handleChange = (pro: any) => (event: any, check: boolean) => {
-        window.console.log(pro);
+    handleChange = (pro: any) => (event: any, checked: any) => {
+        const self = this;
+        let api = 'enableModule';
+        if (!checked) {
+            api = 'disableModule';
+        }
         axios.post('http://localhost:3000/graphql?', {
             query: `
                 mutation {
-                    disableModule(identification: {installed: true}) {
-                    authors {
-                        username,
-                        email
-                    },
-                    description,
-                    enabled,
-                    identification,
-                    installed,
-                    location,
-                    name,
-                    version
+                    api: ${api}(identification: "${pro.identification}") {
+                    code,
+                    message
                     },
                 }
             `,
         }).then(response => {
             if (!response.data.errors) {
-                const results: object = response.data.data;
-                window.console.log(results);
+                pro.enabled = checked;
+                self.setState(
+                    {
+                        snackOPen: true,
+                        errorMessage: response.data.data.api.message,
+                        [pro]: checked,
+                    },
+                );
+            } else {
+                self.setState(
+                    {
+                        snackOPen: true,
+                        errorMessage: response.data.errors[0].message,
+                    },
+                );
             }
         });
-        pro.status = check;
-        this.setState({
-            [pro]: check,
-        });
+
     };
     componentDidMount() {
+        const self = this;
         axios.post('http://localhost:3000/graphql?', {
             query: `
                 query {
@@ -159,22 +131,85 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
             `,
         }).then(response => {
             if (!response.data.errors) {
-                const results: object = response.data.data;
-                window.console.log(results);
+                const results: object = response.data.data.getModules;
+                self.setState({
+                    list: results
+                });
             }
         });
     }
     handleClickOpen = (pro: any) => {
         this.setState({
             modalName: pro.name,
-            modalId: pro.id,
+            modalIdentification: pro.identification,
             open: true,
         });
     };
-    handleClose = () => {
-        this.setState({ open: false });
+    handleWithAuthors = (authors: any) => {
+        const data: Array<{email?: string, username?: string}> = [];
+        let result: Array<string> = [];
+        if (typeof authors === 'object') {
+            Object.keys(authors).map((value: string) => {
+                if (typeof authors[value] === 'object') {
+                    data.push(authors[value]);
+                }
+            });
+        }
+        data.forEach(value => {
+            let info: string = '';
+            if (value.username) {
+                info += value.username;
+                if (value.email) {
+                    info += `<${value.email}>`;
+                }
+            }
+            if (info.length) {
+                result.push(info);
+            }
+        });
+        return result.join(',');
     };
-    handleSubmit = () => {
+    handleSure = () => {
+        this.handleDelete(this.state.modalIdentification);
+    };
+    handleDelete = (name: any) => {
+        this.setState(
+            {
+                loading: true,
+            },
+        );
+        axios.post('http://localhost:3000/graphql?', {
+            query: `
+                mutation {
+                    uninstallModule(identification: "${name}") {
+                    code,
+                    message
+                    },
+                }
+            `,
+        }).then(response => {
+            if (!response.data.errors) {
+                this.setState(
+                    {
+                        snackOPen: true,
+                        loading: false,
+                        errorMessage: response.data.data.uninstallAddon.message,
+                    },
+                );
+                this.handleClose();
+                this.componentDidMount();
+            } else {
+                this.setState(
+                    {
+                        snackOPen: true,
+                        loading: false,
+                        errorMessage: response.data.errors[0].message,
+                    },
+                );
+            }
+        });
+    };
+    handleClose = () => {
         this.setState({ open: false });
     };
     handlePageClick = (data: any) => {
@@ -207,13 +242,13 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                                             <TableRow
                                                 hover
                                                 className={index % 2 === 0 ? this.props.classes.evenRow : ''}
-                                                key={n.id}
+                                                key={index}
                                             >
                                                 <TableCell className={this.props.classes.tableCell} numeric>
                                                     {n.name}
                                                 </TableCell>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
-                                                    {n.author}
+                                                    {this.handleWithAuthors(n.authors)}
                                                 </TableCell>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
                                                     {n.descri}
@@ -221,9 +256,9 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
                                                     <Switch
                                                         color="primary"
-                                                        checked={n.status}
+                                                        checked={n.enabled}
                                                         onChange={this.handleChange(n)}
-                                                        aria-label="n.status"
+                                                        aria-label="n.enabled"
                                                     />
                                                 </TableCell>
                                                 <TableCell numeric>
@@ -279,15 +314,12 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                         <Button onClick={this.handleClose}>
                             取消
                         </Button>
-                        <Button onClick={this.handleSubmit} autoFocus>
+                        <Button onClick={this.handleSure} autoFocus>
                             确认提交
                         </Button>
                     </DialogActions>
                 </Dialog>
                 <Snackbar
-                    classes={{
-                        // root: !this.state.webName ? 'error-prompt' : ''
-                    }}
                     open={this.state.snackOPen}
                     anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
                     onClose={this.handleClose}

@@ -160,6 +160,7 @@ class ModuleInstall extends React.Component<WithStyles<keyof typeof styles>, Sta
                         errorMessage: response.data.data.uninstallModule.message,
                     },
                 );
+                this.handleClose();
                 this.componentDidMount();
             } else {
                 this.setState(
