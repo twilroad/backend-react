@@ -10,7 +10,7 @@ import Button from 'material-ui/Button';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
 // import moment from 'moment';
-import { DatePicker } from 'material-ui-pickers';
+// import { DatePicker } from 'material-ui-pickers';
 import Cascader from 'antd/lib/cascader';
 import 'antd/lib/cascader/style/css.js';
 import axios from 'axios';
@@ -92,8 +92,8 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             name: '',
             img: '',
             classify: '',
-            classifyId: 0,
-            topPlace: '',
+            classifyId: 1,
+            topPlace: 'global',
             types: [],
             topTypes: [
                 {
@@ -175,6 +175,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     source: data.source,
                     sourceUrl: data.sourceUrl,
                     topPlace: data.topPlace,
+                    hidden: data.hidden,
                     editor: {
                         content: data.content,
                     },
@@ -547,6 +548,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                     className={this.props.classes.formControlMargin}
                                     control={
                                         <Switch
+                                            color="primary"
                                             classes={{
                                                 root: this.props.classes.switchHeight,
                                                 default: this.props.classes.switchDefault,
@@ -559,32 +561,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         />
                                     }
                                 />
-                                <FormControl
-                                    fullWidth
-                                    className={this.props.classes.formControlMargin}
-                                    style={{ position: 'relative'}}
-                                >
-                                    <InputLabel
-                                        className={this.props.classes.formLabelFont}
-                                    >
-                                        发布时间
-                                    </InputLabel>
-                                    <Input
-                                        classes={{
-                                            underline: this.props.classes.underline,
-                                        }}
-                                        className={this.props.classes.formLabelFont}
-                                        value={this.state.publishedTime}
-                                    />
-                                    <DatePicker
-                                        className="data-picker"
-                                        style={{marginBottom: '32px'}}
-                                        keyboard
-                                        clearable
-                                        onChange={this.handleDateChange}
-                                        animateYearScrolling={false}
-                                    />
-                                </FormControl>
                                 {/*<DatePicker
                                     className="data-picker"
                                     style={{marginBottom: '32px'}}
