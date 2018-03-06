@@ -147,6 +147,7 @@ const styles = (theme: Theme): StyleRules => ({
         display: 'flex',
         float: 'right',
         'justify-content': 'center',
+        color: '#fff',
     },
     iconBtn: {
         fontSize: '18px',

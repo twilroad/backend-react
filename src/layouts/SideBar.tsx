@@ -181,7 +181,7 @@ class SideBar extends React.Component<PropsWithStyles, State> {
                                 <Badge
                                     className={classNames(this.props.classes.badge, 'badgeIcon')}
                                     classes={{
-                                        colorPrimary: this.props.classes.badge,
+                                        badge: this.props.classes.badge,
                                     }}
                                     style={{border: 0}}
                                     badgeContent={4}
@@ -192,7 +192,7 @@ class SideBar extends React.Component<PropsWithStyles, State> {
                                 <Badge
                                     className={classNames(this.props.classes.badge, 'badgeIcon')}
                                     classes={ {
-                                        colorPrimary: this.props.classes.badge,
+                                        badge: this.props.classes.badge,
                                     } }
                                     style={{border: 0, marginLeft: 30}}
                                     badgeContent={4}
@@ -203,7 +203,7 @@ class SideBar extends React.Component<PropsWithStyles, State> {
                                 <Badge
                                     className={classNames(this.props.classes.badge, 'badgeIcon')}
                                     classes={{
-                                        colorPrimary: this.props.classes.badge,
+                                        badge: this.props.classes.badge,
                                     }}
                                     style={{border: 0, marginLeft: 30}}
                                     badgeContent={4}
