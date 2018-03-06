@@ -276,6 +276,7 @@ class Upload extends React.Component<WithStyles<keyof typeof styles>, State> {
                                     <FormControlLabel
                                         control={
                                             <Checkbox
+                                                color="primary"
                                                 value="GDisOPen"
                                                 onChange={this.handleChangeChecked('GDisOPen')}
                                                 checked={this.state.GDisOPen}

@@ -119,6 +119,7 @@ class MenuEdit extends React.Component<WithStyles<keyof typeof styles>, State> {
                                     } }
                                     control={
                                         <Switch
+                                            color="primary"
                                             classes={{
                                                 root: this.props.classes.switchHeight,
                                                 default: this.props.classes.switchDefault,

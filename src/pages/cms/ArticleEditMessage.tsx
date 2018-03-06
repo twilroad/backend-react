@@ -211,6 +211,7 @@ class ArticleEditMessage extends React.Component<WithStyles<keyof typeof styles>
                                     }}
                                     control={
                                         <Switch
+                                            color="primary"
                                             classes={{
                                                 root: this.props.classes.switchHeight,
                                                 default: this.props.classes.switchDefault,
