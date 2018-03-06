@@ -65,6 +65,7 @@ type State = {
     transition: any,
     errorMessage: string,
     error: boolean,
+    editorLength: number,
 };
 
 const stylesType = {} as StyleRules;
@@ -101,6 +102,7 @@ class PageEdit extends React.Component<Props, State> {
             open: false,
             errorMessage: '',
             error: false,
+            editorLength: 0,
         };
     }
     componentDidMount() {
@@ -145,12 +147,14 @@ class PageEdit extends React.Component<Props, State> {
                         });
                     });
                 }
+                window.console.log(arr);
                 this.setState({
                     title: data.title,
                     alias: data.alias,
                     classifyId: data.classifyId,
                     classify: data.classify,
                     list: arr,
+                    editorLength: data.contents.length,
                 });
             });
         } else {
@@ -249,21 +253,31 @@ class PageEdit extends React.Component<Props, State> {
         });
     }
     handleEditorChange = (content: any, num: any) => {
-        // this.state.list[num].content = content;
+        this.state.list[num].content = content;
         this.setState({
             list: this.state.list,
         });
     };
     handleAddEditor = () => {
         const arr = Object.assign([], this.state.list);
-        arr.push({
-            num: this.state.number + 1,
-            content: '',
-            path: 'neditor/',
-        });
+        if (this.state.pageType !== '1') {
+            arr.push({
+                num: this.state.editorLength,
+                content: '',
+                path: 'neditor/',
+                id: 0,
+            });
+        } else {
+            arr.push({
+                num: this.state.number + 1,
+                content: '',
+                path: 'neditor/',
+            });
+        }
         this.setState({
             list: arr,
             number: this.state.number + 1,
+            editorLength: this.state.editorLength + 1,
         });
     };
     handelSubmit = () => {
@@ -276,20 +290,22 @@ class PageEdit extends React.Component<Props, State> {
         const arrUpdate = new Array();
         const arrUpdate1 = new Array();
         let pageId = 0;
-        window.console.log(this.state.list);
         const arr = Object.assign([], this.state.list);
         arr.forEach((item: any) => {
             newArr.push(item.content);
         });
+        window.console.log(this.state.list);
+        window.console.log(newArr);
         arr.forEach((item: any) => {
             arrUpdate.push({
                 id: item.id,
                 content: item.content,
             });
-            arrUpdate.forEach((sub: any) => {
-                const ite = JSON.stringify(sub);
-                arrUpdate1.push(ite);
-            });
+        });
+        window.console.log(arrUpdate);
+        arrUpdate.forEach((sub: any) => {
+            const ite = JSON.stringify(sub);
+            arrUpdate1.push(ite);
         });
         window.console.log(arrUpdate1);
         if (this.state.pageType !== '1') {
@@ -345,7 +361,7 @@ class PageEdit extends React.Component<Props, State> {
                             id: ${pageId},
                             title: "${this.state.title}",
                             alias: "${this.state.alias}",
-                            content: ${arrUpdate1},
+                            content: [${arrUpdate1},
                             classify: "${this.state.classify}",
                             classifyId: ${this.state.classifyId},
                             limitNum: 10,
