@@ -524,7 +524,7 @@ class App extends React.Component<Props, State> {
                                                     <IconButton
                                                         aria-haspopup="true"
                                                         className={this.props.classes.menuBtn}
-                                                        color="inherit"
+                                                        color="primary"
                                                         onClick={this.toggleDrawer}
                                                     >
                                                         {

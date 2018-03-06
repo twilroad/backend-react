@@ -172,7 +172,6 @@ class AddonInstall extends React.Component<WithStyles<keyof typeof styles>, Stat
                 }
             `,
         }).then(response => {
-            window.console.log(response);
             if (!response.data.errors) {
                 this.setState(
                     {
