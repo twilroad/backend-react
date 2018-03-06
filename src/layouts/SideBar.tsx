@@ -414,7 +414,7 @@ class SideBar extends React.Component<PropsWithStyles, State> {
                                                                                                 <ListItemText
                                                                                                     style={{
                                                                                                         paddingLeft:
-                                                                                                            78
+                                                                                                            100
                                                                                                     }}
                                                                                                     inset
                                                                                                     primary={
