@@ -291,6 +291,7 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
                                     } }
                                     control={
                                         <Switch
+                                            color="primary"
                                             classes={{
                                                 root: this.props.classes.switchHeight,
                                                 default: this.props.classes.switchDefault,
@@ -313,6 +314,7 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
                                     } }
                                     control={
                                         <Switch
+                                            color="primary"
                                             classes={{
                                                 root: this.props.classes.switchHeight,
                                                 default: this.props.classes.switchDefault,

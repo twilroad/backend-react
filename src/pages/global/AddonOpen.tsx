@@ -8,6 +8,7 @@ import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import ClearIcon from 'material-ui-icons/Clear';
 import Switch from 'material-ui/Switch';
+import Snackbar from 'material-ui/Snackbar';
 import Table, {
     TableBody,
     TableCell,
@@ -45,11 +46,15 @@ const styles = {
 };
 type State = {
     open: boolean,
-    modalId: string,
+    modalIdentification: string,
     modalName: string,
     rowsPerPage: number,
     currentPage: number,
     list: any,
+    loading: boolean,
+    transition: any,
+    messageOpen: boolean,
+    errorMessage: string,
 };
 
 class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> {
@@ -57,24 +62,61 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
         super(props, state);
         this.state = {
             open: false,
-            modalId: '',
+            modalIdentification: '',
             modalName: '',
             rowsPerPage: 2,
             currentPage: 0,
             list: [],
+            loading: false,
+            transition: undefined,
+            messageOpen: false,
+            errorMessage: '',
         };
     }
-    handleChange = (pro: any) => (checked: any) => {
-        window.console.log(checked);
-        pro.enabled = checked;
-        this.setState({
-            [pro]: checked,
+    handleChange = (pro: any) => (event: any, checked: any) => {
+        let api = 'enableAddon';
+        if (!checked) {
+            api = 'disableAddon';
+        }
+        window.console.log(checked, pro.identification, api);
+        axios.post('http://localhost:3000/graphql?', {
+            query: `
+                mutation {
+                    api: ${api}(identification: "${pro.identification}") {
+                    code,
+                    message
+                    },
+                }
+            `,
+        }).then(response => {
+            if (!response.data.errors) {
+                this.setState(
+                    {
+                        messageOpen: true,
+                        loading: false,
+                        errorMessage: response.data.data.api.message,
+                    },
+                );
+                pro.enabled = checked;
+                this.setState({
+                    [pro]: checked,
+                });
+            } else {
+                this.setState(
+                    {
+                        messageOpen: true,
+                        loading: false,
+                        errorMessage: response.data.errors[0].message,
+                    },
+                );
+            }
         });
+
     };
     handleClickOpen = (pro: any) => {
         this.setState({
             modalName: pro.name,
-            modalId: pro.id,
+            modalIdentification: pro.modalIdentification,
             open: true,
         });
     };
@@ -177,7 +219,8 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
                                                 </TableCell>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
                                                     <Switch
-                                                        value={n.enabled}
+                                                        color="primary"
+                                                        checked={n.enabled}
                                                         onChange={this.handleChange(n)}
                                                         aria-label="n.enabled"
                                                     />
@@ -239,6 +282,16 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
                             确认提交
                         </Button>
                     </DialogActions>
+                    <Snackbar
+                        open={this.state.messageOpen}
+                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                        onClose={this.handleClose}
+                        transition={this.state.transition}
+                        SnackbarContentProps={{
+                            'aria-describedby': 'message-id',
+                        }}
+                        message={<span id="message-id">{this.state.errorMessage}</span>}
+                    />
                 </Dialog>
             </div>
         );
