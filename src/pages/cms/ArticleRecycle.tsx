@@ -455,6 +455,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
                                 <TableRow>
                                     <TableCell className="table-cell-status">
                                         <Checkbox
+                                            color="primary"
                                             checked={this.state.checkedAll}
                                             onChange={this.handleChangeAll('checkedAll')}
                                             value="checkedAll"
@@ -480,6 +481,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
                                                     className="table-cell-status"
                                                 >
                                                     <Checkbox
+                                                        color="primary"
                                                         checked={n.check}
                                                         onChange={this.handleChange(n)}
                                                         value="n.check"

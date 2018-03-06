@@ -143,6 +143,7 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                                                 </TableCell>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
                                                     <Checkbox
+                                                        color="primary"
                                                         className="table-check-box"
                                                         checked={n.defaul}
                                                         onChange={this.changeCheckBox(n)}

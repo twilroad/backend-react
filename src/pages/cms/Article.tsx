@@ -726,6 +726,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                                 <TableRow>
                                     <TableCell className="table-cell-status">
                                         <Checkbox
+                                            color="primary"
                                             checked={this.state.checkedAll}
                                             onChange={this.handleChangeAll('checkedAll')}
                                             value="checkedAll"
@@ -750,6 +751,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                                                     className="table-cell-status"
                                                 >
                                                     <Checkbox
+                                                        color="primary"
                                                         checked={n.check}
                                                         onChange={this.handleChange(n)}
                                                         value="n.check"
