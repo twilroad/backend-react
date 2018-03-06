@@ -205,7 +205,7 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
                         {
                             open: true,
                             loading: false,
-                            errorMessage: '提交成功！!',
+                            errorMessage: response.data.data.companyName.message,
                         },
                     );
                 } else {
