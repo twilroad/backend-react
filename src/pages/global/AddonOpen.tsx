@@ -74,11 +74,11 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
         };
     }
     handleChange = (pro: any) => (event: any, checked: any) => {
+        const self = this;
         let api = 'enableAddon';
         if (!checked) {
             api = 'disableAddon';
         }
-        window.console.log(checked, pro.identification, api);
         axios.post('http://localhost:3000/graphql?', {
             query: `
                 mutation {
@@ -90,17 +90,51 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
             `,
         }).then(response => {
             if (!response.data.errors) {
+                pro.enabled = checked;
+                self.setState(
+                    {
+                        messageOpen: true,
+                        errorMessage: response.data.data.api.message,
+                        [pro]: checked,
+                    },
+                );
+            } else {
+                self.setState(
+                    {
+                        messageOpen: true,
+                        errorMessage: response.data.errors[0].message,
+                    },
+                );
+            }
+        });
+
+    };
+    handleDelete = (name: any) => {
+        this.setState(
+            {
+                loading: true,
+            },
+        );
+        axios.post('http://localhost:3000/graphql?', {
+            query: `
+                mutation {
+                    uninstallAddon(identification: "${name}") {
+                    code,
+                    message
+                    },
+                }
+            `,
+        }).then(response => {
+            if (!response.data.errors) {
                 this.setState(
                     {
                         messageOpen: true,
                         loading: false,
-                        errorMessage: response.data.data.api.message,
+                        errorMessage: response.data.data.uninstallAddon.message,
                     },
                 );
-                pro.enabled = checked;
-                this.setState({
-                    [pro]: checked,
-                });
+                this.handleClose();
+                this.componentDidMount();
             } else {
                 this.setState(
                     {
@@ -111,12 +145,11 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
                 );
             }
         });
-
     };
     handleClickOpen = (pro: any) => {
         this.setState({
             modalName: pro.name,
-            modalIdentification: pro.modalIdentification,
+            modalIdentification: pro.identification,
             open: true,
         });
     };
@@ -143,6 +176,9 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
             }
         });
         return result.join(',');
+    };
+    handleSure = () => {
+        this.handleDelete(this.state.modalIdentification);
     };
     componentDidMount() {
         const self = this;
@@ -278,21 +314,21 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
                         <Button onClick={this.handleClose}>
                             取消
                         </Button>
-                        <Button onClick={this.handleClose} autoFocus>
-                            确认提交
+                        <Button onClick={this.handleSure} autoFocus>
+                            删除
                         </Button>
                     </DialogActions>
-                    <Snackbar
-                        open={this.state.messageOpen}
-                        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-                        onClose={this.handleClose}
-                        transition={this.state.transition}
-                        SnackbarContentProps={{
-                            'aria-describedby': 'message-id',
-                        }}
-                        message={<span id="message-id">{this.state.errorMessage}</span>}
-                    />
                 </Dialog>
+                <Snackbar
+                    open={this.state.messageOpen}
+                    anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+                    onClose={this.handleClose}
+                    transition={this.state.transition}
+                    SnackbarContentProps={{
+                        'aria-describedby': 'message-id',
+                    }}
+                    message={<span id="message-id">{this.state.errorMessage}</span>}
+                />
             </div>
         );
     }
