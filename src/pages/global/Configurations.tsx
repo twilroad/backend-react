@@ -164,38 +164,38 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
                 query: `
                 mutation {
                     webName: setSetting(key: "global.webName", value: "${this.state.webName}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },
                     domainName: setSetting(key: "global.domainName", value: "${this.state.domainName}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },  
                     siteOpen: setSetting(key: "global.siteOpen", value: "${this.state.siteOpen ? 1 : 0}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },  
                     multiDomainOpen: setSetting(key: "global.multiDomainOpen",
                      value: "${this.state.multiDomainOpen ? 1 : 0}")
                      {
-                    key,
-                    value,
+                    code,
+                    message,
                     },  
                     keepRecord: setSetting(key: "global.keepRecord", value: "${this.state.keepRecord}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },  
                     companyName: setSetting(key: "global.companyName", value: "${this.state.companyName}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },  
                     copyright: setSetting(key: "global.copyright", value: "${this.state.copyright}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },  
                     statisticalCode: setSetting(key: "global.statisticalCode", value: "${this.state.statisticalCode}") {
-                    key,
-                    value,
+                    code,
+                    message,
                     },
                 }
             `,
