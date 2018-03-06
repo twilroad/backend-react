@@ -97,6 +97,10 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             types: [],
             topTypes: [
                 {
+                    id: 'cancel',
+                    type: '无',
+                },
+                {
                     id: 'global',
                     type: '全局',
                 },
@@ -354,7 +358,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     }
                 `,
             }).then(response => {
-                const data = JSON.parse(response.data.data.PageCUD);
+                const data = JSON.parse(response.data.data.ArticleCU);
                 if (!response.data.errors) {
                     if (data.Continue) {
                         this.setState(
