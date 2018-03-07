@@ -90,7 +90,7 @@ class PageEdit extends React.Component<Props, State> {
             title: '',
             alias: '',
             classify: '',
-            classifyId: 0,
+            classifyId: 1,
             pageType: type,
             pageId: Number(proId),
             number: 0,
@@ -132,22 +132,14 @@ class PageEdit extends React.Component<Props, State> {
             }).then(response => {
                 const data = response.data.data.getPageById;
                 const arr = new Array();
-                if (data.contents.length === 0) {
+                data.contents.forEach((item: any, index: number) => {
                     arr.push({
-                        num: 0,
-                        content: '',
+                        num: index,
+                        id: item.id,
+                        content: item.content,
                         path: 'neditor/',
                     });
-                } else {
-                    data.contents.forEach((item: any) => {
-                        arr.push({
-                            id: item.id,
-                            content: item.content,
-                            path: 'neditor/',
-                        });
-                    });
-                }
-                window.console.log(arr);
+                });
                 this.setState({
                     title: data.title,
                     alias: data.alias,
