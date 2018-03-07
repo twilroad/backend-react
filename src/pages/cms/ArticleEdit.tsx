@@ -169,7 +169,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             `,
             }).then(response => {
                 const data = response.data.data.getArticlesNoLimit[0];
-                window.console.log(data);
                 this.setState({
                     name: data.name,
                     abstract: data.abstract,
@@ -311,6 +310,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             publishedTime: "${this.state.publishedTime}",
                             source: "${this.state.source}",
                             sourceUrl: "${this.state.sourceUrl}",
+                            pictureUpload:{
+                              bucketName: "public",
+                              rawName: "${this.state.img}",
+                              base64: "",
+                            },
                         })
                     }
                 `,
@@ -354,6 +358,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             publishedTime: "${this.state.publishedTime}",
                             source: "${this.state.source}",
                             sourceUrl: "${this.state.sourceUrl}",
+                            pictureUpload:{
+                              bucketName: "public",
+                              rawName: "${this.state.img}",
+                              base64: "",
+                            },
                         })
                     }
                 `,
