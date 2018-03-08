@@ -504,7 +504,7 @@ class App extends React.Component<Props, State> {
         createHashHistory().push(selectedOption.url);
     };
     componentDidMount() {
-        axios.get('../assets/config.json').then((response: any) => {
+        axios.get('./config.json').then((response: any) => {
             window.console.log(response);
         });
     }
