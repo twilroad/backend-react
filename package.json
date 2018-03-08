@@ -33,7 +33,7 @@
         "date-fns": "2.0.0-alpha.7",
         "material-ui": "1.0.0-beta.35",
         "material-ui-icons": "^1.0.0-beta.17",
-        "material-ui-pickers": "^1.0.0-rc.2",
+        "material-ui-pickers": "^1.0.0-rc.1",
         "moment": "^2.20.1",
         "normalize.css": "^7.0.0",
         "prop-types": "^15.6.0",
@@ -64,7 +64,7 @@
         "@types/jest": "latest",
         "@types/node": "latest",
         "@types/react": "latest",
-        "@types/react-dom": "^16.0.3",
+        "@types/react-dom": "^16.0.4",
         "@types/recompose": "latest"
     },
     "scripts": {
@@ -74,6 +74,7 @@
         "eject": "react-scripts-ts eject"
     },
     "workspaces": [
-        "pacakges/@types/jss"
+        "pacakges/@types/jss",
+        "pacakges/material-ui-pickers"
     ]
 }

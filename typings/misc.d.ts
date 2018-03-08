@@ -10,3 +10,4 @@ declare module 'react-dazzle';
 declare module 'bizcharts';
 declare module '@antv/data-set';
 declare module 'react-web-cascader'
+declare module 'base64-img'
