@@ -353,7 +353,7 @@ class PageEdit extends React.Component<Props, State> {
                             id: ${pageId},
                             title: "${this.state.title}",
                             alias: "${this.state.alias}",
-                            content: [${arrUpdate1},
+                            content: [${arrUpdate1}],
                             classify: "${this.state.classify}",
                             classifyId: ${this.state.classifyId},
                             limitNum: 10,

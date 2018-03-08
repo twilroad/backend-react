@@ -16,6 +16,7 @@ import 'antd/lib/cascader/style/css.js';
 import axios from 'axios';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
+import base64Img from 'base64-img';
 
 const styles = {
     root: {
@@ -56,6 +57,7 @@ const styles = {
 type State = {
     name: string,
     img: string,
+    baseImg: string,
     classify: string,
     classifyId: number,
     topPlace: string,
@@ -91,6 +93,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         this.state = {
             name: '',
             img: '',
+            baseImg: '',
             classify: '',
             classifyId: 1,
             topPlace: 'global',
@@ -171,6 +174,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                 const data = response.data.data.getArticlesNoLimit[0];
                 this.setState({
                     name: data.name,
+                    img: data.url,
                     abstract: data.abstract,
                     classifyId: data.classifyId,
                     classify: data.classify,
@@ -288,109 +292,111 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         });
     };
     handleSubmit = () => {
+        const self = this;
         let pageId = 0;
-        if (this.state.pageType !== '1') {
-            pageId = this.state.pageId;
+        if (self.state.pageType !== '1') {
+            pageId = self.state.pageId;
         } else {
             pageId = 0;
         }
-        window.console.log(this.state.hidden);
-        if (this.state.pageType === '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
-                query: `
+        base64Img.requestBase64(`${self.state.img}`, function(err: any, res: any, body: any) {
+            if (self.state.pageType === '1') {
+                axios.post('http://192.168.1.121:3000/graphql?', {
+                    query: `
                     mutation {
                         ArticleCU(createArt: {
-                            name: "${this.state.name}",
-                            classify: "${this.state.classify}",
-                            classifyId: ${this.state.classifyId},
-                            abstract: "${this.state.abstract}",
-                            content: "${this.state.editor.content}",
-                            topPlace: ${this.state.topPlace},
-                            hidden: ${this.state.hidden},
-                            publishedTime: "${this.state.publishedTime}",
-                            source: "${this.state.source}",
-                            sourceUrl: "${this.state.sourceUrl}",
+                            name: "${self.state.name}",
+                            classify: "${self.state.classify}",
+                            classifyId: ${self.state.classifyId},
+                            abstract: "${self.state.abstract}",
+                            content: "${self.state.editor.content}",
+                            topPlace: ${self.state.topPlace},
+                            hidden: ${self.state.hidden},
+                            publishedTime: "${self.state.publishedTime}",
+                            source: "${self.state.source}",
+                            sourceUrl: "${self.state.sourceUrl}",
                             pictureUpload:{
-                              bucketName: "public",
-                              rawName: "${this.state.img}",
-                              base64: "",
+                                bucketName: "public",
+                                rawName: "${self.state.img}",
+                                base64: "${body.substring(body.indexOf(',') + 1)}",
                             },
                         })
                     }
                 `,
-            }).then(response => {
-                const data = JSON.parse(response.data.data.ArticleCU);
-                if (!response.data.errors) {
-                    if (data.Continue) {
-                        this.setState(
-                            {
-                                error: false,
-                                open: true,
-                                loading: false,
-                                errorMessage: '提交成功!',
-                            },
-                        );
-                    } else if (!data.Continue) {
-                        this.setState(
-                            {
-                                error: true,
-                                open: true,
-                                loading: false,
-                                errorMessage: data.MessageCodeError,
-                            },
-                        );
+                }).then(response => {
+                    const data = JSON.parse(response.data.data.ArticleCU);
+                    if (!response.data.errors) {
+                        if (data.Continue) {
+                            self.setState(
+                                {
+                                    error: false,
+                                    open: true,
+                                    loading: false,
+                                    errorMessage: '提交成功!',
+                                },
+                            );
+                        } else if (!data.Continue) {
+                            self.setState(
+                                {
+                                    error: true,
+                                    open: true,
+                                    loading: false,
+                                    errorMessage: data.MessageCodeError,
+                                },
+                            );
+                        }
                     }
-                }
-            });
-        } else if (this.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
-                query: `
+                });
+            } else if (self.state.pageType !== '1') {
+                axios.post('http://192.168.1.121:3000/graphql?', {
+                    query: `
                     mutation {
                          ArticleCU(updateArt: {
                             id: ${pageId},
-                            name: "${this.state.name}",
-                            content: "${this.state.editor.content}",
-                            classify: "${this.state.classify}",
-                            classifyId: ${this.state.classifyId},
-                            abstract: "${this.state.abstract}",
-                            topPlace: ${this.state.topPlace},
-                            hidden: ${this.state.hidden},
-                            publishedTime: "${this.state.publishedTime}",
-                            source: "${this.state.source}",
-                            sourceUrl: "${this.state.sourceUrl}",
+                            name: "${self.state.name}",
+                            content: "${self.state.editor.content}",
+                            classify: "${self.state.classify}",
+                            classifyId: ${self.state.classifyId},
+                            abstract: "${self.state.abstract}",
+                            topPlace: ${self.state.topPlace},
+                            hidden: ${self.state.hidden},
+                            publishedTime: "${self.state.publishedTime}",
+                            source: "${self.state.source}",
+                            sourceUrl: "${self.state.sourceUrl}",
                             pictureUpload:{
-                              bucketName: "public",
-                              rawName: "${this.state.img}",
-                              base64: "",
+                                bucketName: "public",
+                                rawName: "${self.state.img}",
+                                base64: "${body.substring(body.indexOf(',') + 1)}",
                             },
                         })
                     }
                 `,
-            }).then(response => {
-                const data = JSON.parse(response.data.data.ArticleCU);
-                if (!response.data.errors) {
-                    if (data.Continue) {
-                        this.setState(
-                            {
-                                error: false,
-                                open: true,
-                                loading: false,
-                                errorMessage: '修改信息成功!',
-                            },
-                        );
-                    } else if (!data.Continue) {
-                        this.setState(
-                            {
-                                error: true,
-                                open: true,
-                                loading: false,
-                                errorMessage: data.MessageCodeError,
-                            },
-                        );
+                }).then(response => {
+                    const data = JSON.parse(response.data.data.ArticleCU);
+                    if (!response.data.errors) {
+                        if (data.Continue) {
+                            self.setState(
+                                {
+                                    error: false,
+                                    open: true,
+                                    loading: false,
+                                    errorMessage: '修改信息成功!',
+                                },
+                            );
+                        } else if (!data.Continue) {
+                            self.setState(
+                                {
+                                    error: true,
+                                    open: true,
+                                    loading: false,
+                                    errorMessage: data.MessageCodeError,
+                                },
+                            );
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     };
     getImgURL = (event: any) => {
         this.setState({
