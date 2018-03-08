@@ -286,19 +286,16 @@ class PageEdit extends React.Component<Props, State> {
         arr.forEach((item: any) => {
             newArr.push(item.content);
         });
-        window.console.log(newArr);
         arr.forEach((item: any) => {
             arrUpdate.push({
                 id: item.id,
                 content: item.content,
             });
         });
-        window.console.log(arrUpdate);
         arrUpdate.forEach((sub: any) => {
             const ite = JSON.stringify(sub);
             arrUpdate1.push(ite);
         });
-        window.console.log(arrUpdate1);
         if (this.state.pageType !== '1') {
             pageId = this.state.pageId;
         } else {
@@ -352,7 +349,7 @@ class PageEdit extends React.Component<Props, State> {
                             id: ${pageId},
                             title: "${this.state.title}",
                             alias: "${this.state.alias}",
-                            content: [${arrUpdate1}],
+                            content: "[${arrUpdate1}]",
                             classify: "${this.state.classify}",
                             classifyId: ${this.state.classifyId},
                             limitNum: 10,
