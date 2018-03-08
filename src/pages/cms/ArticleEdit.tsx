@@ -10,7 +10,9 @@ import Button from 'material-ui/Button';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
 // import moment from 'moment';
-// import { DatePicker } from 'material-ui-pickers';
+import { DatePicker } from 'material-ui-pickers';
+import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
+import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import Cascader from 'antd/lib/cascader';
 import 'antd/lib/cascader/style/css.js';
 import axios from 'axios';
@@ -125,7 +127,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                 },
             ],
             abstract: '',
-            publishedTime: '',
+            publishedTime: new Date(),
             sourceUrl: '',
             source: '',
             hidden: false,
@@ -167,14 +169,22 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                         createAt,
                         updateAt,
                         check,
+                        pictureUrl,
                     }
                 }
             `,
             }).then(response => {
                 const data = response.data.data.getArticlesNoLimit[0];
+                let imgStr = '';
+                if (data.pictureUrl !== null) {
+                    imgStr = data.pictureUrl.substring(
+                        data.pictureUrl.indexOf('public/') + 7, data.pictureUrl.indexOf('?'));
+                } else if (data.pictureUrl === null) {
+                    imgStr = '';
+                }
                 this.setState({
                     name: data.name,
-                    img: data.url,
+                    img: imgStr,
                     abstract: data.abstract,
                     classifyId: data.classifyId,
                     classify: data.classify,
@@ -275,7 +285,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
     }
     handleDateChange = (date: any) => {
         let currentTime = new Date(date).toLocaleDateString();
-        window.console.log(currentTime);
         this.setState({ publishedTime: currentTime });
     };
     handleChange = (name: any) => (event: any) => {
@@ -580,17 +589,19 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         />
                                     }
                                 />
-                                {/*<DatePicker
-                                    className="data-picker"
-                                    style={{marginBottom: '32px'}}
-                                    keyboard
-                                    clearable
-                                    format="MMMM Do, YYYY"
-                                    label="发布时间"
-                                    value={this.state.publishedTime}
-                                    onChange={this.handleDateChange}
-                                    animateYearScrolling={false}
-                                />*/}
+                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                    <DatePicker
+                                        className="data-picker"
+                                        style={{marginBottom: '32px'}}
+                                        keyboard
+                                        clearable
+                                        format="MMMM Do, YYYY"
+                                        label="发布时间"
+                                        value={this.state.publishedTime}
+                                        onChange={this.handleDateChange}
+                                        animateYearScrolling={false}
+                                    />
+                                </MuiPickersUtilsProvider>
                                 <FormControl
                                     fullWidth
                                     className={this.props.classes.formControlMargin}

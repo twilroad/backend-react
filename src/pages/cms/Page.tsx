@@ -251,9 +251,6 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
                     });
                 }
             } else {
-                window.console.log(this.state.list);
-                window.console.log(ids.length);
-                window.console.log(this.state.rowsPerPage);
                 newIds.push(this.state.list[i].id);
                 if (ids.length <= 0 && newIds.length === this.state.list.length) {
                     this.setState({

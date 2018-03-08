@@ -286,7 +286,6 @@ class PageEdit extends React.Component<Props, State> {
         arr.forEach((item: any) => {
             newArr.push(item.content);
         });
-        window.console.log(this.state.list);
         window.console.log(newArr);
         arr.forEach((item: any) => {
             arrUpdate.push({
