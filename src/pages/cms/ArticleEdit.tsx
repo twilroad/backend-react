@@ -18,7 +18,7 @@ import 'antd/lib/cascader/style/css.js';
 import axios from 'axios';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
-import base64Img from 'base64-img';
+// import base64Img from 'base64-img';
 
 const styles = {
     root: {
@@ -308,10 +308,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         } else {
             pageId = 0;
         }
-        base64Img.requestBase64(`${self.state.img}`, function(err: any, res: any, body: any) {
-            if (self.state.pageType === '1') {
-                axios.post('http://192.168.1.121:3000/graphql?', {
-                    query: `
+        if (self.state.pageType === '1') {
+            axios.post('http://192.168.1.121:3000/graphql?', {
+                query: `
                     mutation {
                         ArticleCU(createArt: {
                             name: "${self.state.name}",
@@ -327,38 +326,38 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             pictureUpload:{
                                 bucketName: "public",
                                 rawName: "${self.state.img}",
-                                base64: "${body.substring(body.indexOf(',') + 1)}",
+                                base64: "${this.state.baseImg}",
                             },
                         })
                     }
                 `,
-                }).then(response => {
-                    const data = JSON.parse(response.data.data.ArticleCU);
-                    if (!response.data.errors) {
-                        if (data.Continue) {
-                            self.setState(
-                                {
-                                    error: false,
-                                    open: true,
-                                    loading: false,
-                                    errorMessage: '提交成功!',
-                                },
-                            );
-                        } else if (!data.Continue) {
-                            self.setState(
-                                {
-                                    error: true,
-                                    open: true,
-                                    loading: false,
-                                    errorMessage: data.MessageCodeError,
-                                },
-                            );
-                        }
+            }).then(response => {
+                const data = JSON.parse(response.data.data.ArticleCU);
+                if (!response.data.errors) {
+                    if (data.Continue) {
+                        self.setState(
+                            {
+                                error: false,
+                                open: true,
+                                loading: false,
+                                errorMessage: '提交成功!',
+                            },
+                        );
+                    } else if (!data.Continue) {
+                        self.setState(
+                            {
+                                error: true,
+                                open: true,
+                                loading: false,
+                                errorMessage: data.MessageCodeError,
+                            },
+                        );
                     }
-                });
-            } else if (self.state.pageType !== '1') {
-                axios.post('http://192.168.1.121:3000/graphql?', {
-                    query: `
+                }
+            });
+        } else if (self.state.pageType !== '1') {
+            axios.post('http://192.168.1.121:3000/graphql?', {
+                query: `
                     mutation {
                          ArticleCU(updateArt: {
                             id: ${pageId},
@@ -375,42 +374,61 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             pictureUpload:{
                                 bucketName: "public",
                                 rawName: "${self.state.img}",
-                                base64: "${body.substring(body.indexOf(',') + 1)}",
+                                base64: "${this.state.baseImg}",
                             },
                         })
                     }
                 `,
-                }).then(response => {
-                    const data = JSON.parse(response.data.data.ArticleCU);
-                    if (!response.data.errors) {
-                        if (data.Continue) {
-                            self.setState(
-                                {
-                                    error: false,
-                                    open: true,
-                                    loading: false,
-                                    errorMessage: '修改信息成功!',
-                                },
-                            );
-                        } else if (!data.Continue) {
-                            self.setState(
-                                {
-                                    error: true,
-                                    open: true,
-                                    loading: false,
-                                    errorMessage: data.MessageCodeError,
-                                },
-                            );
-                        }
+            }).then(response => {
+                const data = JSON.parse(response.data.data.ArticleCU);
+                if (!response.data.errors) {
+                    if (data.Continue) {
+                        self.setState(
+                            {
+                                error: false,
+                                open: true,
+                                loading: false,
+                                errorMessage: '修改信息成功!',
+                            },
+                        );
+                    } else if (!data.Continue) {
+                        self.setState(
+                            {
+                                error: true,
+                                open: true,
+                                loading: false,
+                                errorMessage: data.MessageCodeError,
+                            },
+                        );
                     }
-                });
-            }
-        });
+                }
+            });
+        }
     };
     getImgURL = (event: any) => {
-        this.setState({
+        const self = this;
+        self.setState({
             img: event.target.value.substr(12),
         });
+        const reader = new FileReader();
+        const AllowImgFileSize = 2100000;
+        const file = event.target.files[0];
+        let imgUrlBase64;
+        if (file) {
+            imgUrlBase64 = reader.readAsDataURL(file);
+            window.console.log(imgUrlBase64);
+            reader.onload = function (e: any) {
+                if (AllowImgFileSize < reader.result.length) {
+                    // alert( '上传失败，请上传不大于2M的图片！');
+                    return;
+                } else {
+                    self.setState({
+                        baseImg: reader.result.substring(reader.result.indexOf(',') + 1),
+                    });
+                }
+            };
+        }
+
     };
     handleChangeType = (value: any, select: any) => {
         this.setState({
