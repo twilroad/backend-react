@@ -63,6 +63,8 @@ const styles = {
     tableCell: {
         'text-align': 'left',
         'padding': '0',
+        'font-size': '12px',
+        'color': 'rgba(0, 0, 0, 0.54)',
     },
 };
 type State = {
