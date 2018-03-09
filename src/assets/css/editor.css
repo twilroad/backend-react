@@ -1,5 +1,6 @@
 .editor {
     width: 100%;
+    margin-bottom: 14px;
 }
 .editor .edui-notadd .edui-editor {
     width: 100% !important;
@@ -26,7 +27,7 @@
     display: block;
     color: #3f51b5;
     margin-top: 6px;
-    margin-bottom: 34px;
+    margin-bottom: 14px;
     font-size: 12px;
     cursor: pointer;
 }

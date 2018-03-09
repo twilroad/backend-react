@@ -519,6 +519,15 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
             [name]: val,
         });
     };
+    handleSubmitReset = () => {
+        this.setState({
+            isTop: '0',
+            classifyId: 1,
+            keyword: '',
+            classify: '',
+        });
+        this.refreshPage();
+    };
     handleSubmitSearch = () => {
         let param = false;
         if (this.state.isTop === '2') {
@@ -982,10 +991,18 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                                 <Button
                                     variant="raised"
                                     color="primary"
-                                    style={{marginTop: 2, fontSize: 12, borderRadius: 4}}
+                                    style={{marginTop: 2, fontSize: 12, borderRadius: 4, marginRight: 10}}
                                     onClick={this.handleSubmitSearch}
                                 >
                                     搜索
+                                </Button>
+                                <Button
+                                    variant="raised"
+                                    color="primary"
+                                    style={{marginTop: 2, fontSize: 12, borderRadius: 4}}
+                                    onClick={this.handleSubmitReset}
+                                >
+                                    重置
                                 </Button>
                             </form>
                         </Paper>

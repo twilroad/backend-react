@@ -98,7 +98,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             baseImg: '',
             classify: '',
             classifyId: 1,
-            topPlace: 'global',
+            topPlace: 'cancel',
             types: [],
             topTypes: [
                 {
