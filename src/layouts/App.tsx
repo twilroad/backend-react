@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Redirect, Route, Switch } from 'react-router';
+import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
 import { HashRouter } from 'react-router-dom';
@@ -502,6 +503,11 @@ class App extends React.Component<Props, State> {
         this.setState({ selectedOption });
         createHashHistory().push(selectedOption.url);
     };
+    componentDidMount() {
+        axios.get('./config.json').then((response: any) => {
+            window.console.log(response);
+        });
+    }
     render() {
         const { current, openSearch, selectedOption, selectOptions, open } = this.state;
         const { classes } = this.props;

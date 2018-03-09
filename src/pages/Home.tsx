@@ -150,11 +150,6 @@ class Home extends React.Component<WithStyles<keyof typeof styles>, State> {
             index: index,
         });
     };
-    // componentDidMount() {
-    //     axios.get('../assets/data.areaChart.json').then((response: any) => {
-    //         window.console.log(response);
-    //     });
-    // };
     render() {
         const { index, chart } = this.state;
         return (
