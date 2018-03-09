@@ -521,13 +521,58 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
     };
     handleSubmitSearch = () => {
         let param = false;
-        if (this.state.isTop === '0' || this.state.isTop === '2') {
+        if (this.state.isTop === '2') {
             param = false;
         } else if (this.state.isTop === '1') {
             param = true;
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
-            query: `
+        if (this.state.isTop === '0') {
+            axios.post('http://192.168.1.121:3000/graphql?', {
+                query: `
+                query {
+                    getArticlesLimit(serachArticle: {
+                        limitNum: 10,
+                        pages: 1,
+                        keyWords: "${this.state.keyword}",
+                        classifyId: ${this.state.classifyId},
+                    }){
+                        pagination{
+                            totalItems,
+                            currentPage,
+                            pageSize,
+                            totalPages,
+                            startPage,
+                            endPage,
+                            startIndex,
+                            endIndex,
+                            pages,
+                        },
+                        articles{
+                            id,
+                            check,
+                            name,
+                            classify,
+                            publishedTime,
+                        }
+                    }
+                }
+            `,
+            }).then(response => {
+                if (!response.data.errors) {
+                    const data = response.data.data.getArticlesLimit;
+                    this.setState({
+                        list: data.articles,
+                        totalItems: data.pagination.totalItems,
+                        rowsPerPage: data.pagination.pageSize,
+                        currentPage: data.pagination.currentPage - 1,
+                        right: !this.state.right,
+                        pageStatus: true,
+                    });
+                }
+            });
+        } else {
+            axios.post('http://192.168.1.121:3000/graphql?', {
+                query: `
                 query {
                     getArticlesLimit(serachArticle: {
                         limitNum: 10,
@@ -557,19 +602,20 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                     }
                 }
             `,
-        }).then(response => {
-            if (!response.data.errors) {
-                const data = response.data.data.getArticlesLimit;
-                this.setState({
-                    list: data.articles,
-                    totalItems: data.pagination.totalItems,
-                    rowsPerPage: data.pagination.pageSize,
-                    currentPage: data.pagination.currentPage - 1,
-                    right: !this.state.right,
-                    pageStatus: true,
-                });
-            }
-        });
+            }).then(response => {
+                if (!response.data.errors) {
+                    const data = response.data.data.getArticlesLimit;
+                    this.setState({
+                        list: data.articles,
+                        totalItems: data.pagination.totalItems,
+                        rowsPerPage: data.pagination.pageSize,
+                        currentPage: data.pagination.currentPage - 1,
+                        right: !this.state.right,
+                        pageStatus: true,
+                    });
+                }
+            });
+        }
     };
     handlePageClick = (data: any) => {
         let param = false;
