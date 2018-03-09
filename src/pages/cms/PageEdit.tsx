@@ -292,19 +292,14 @@ class PageEdit extends React.Component<Props, State> {
                 content: item.content,
             });
         });
-        window.console.log(arrUpdate);
+        let str;
         arrUpdate.forEach((sub: any) => {
-            const ite = JSON.stringify(sub);
-            arrUpdate1.push(ite);
-            // arrUpdate1.push(sub);
+            str = `{
+                id: ${sub.id},
+                content: "${sub.content}",
+            }`;
+            arrUpdate1.push(str);
         });
-        window.console.log(arrUpdate1);
-        // const json = Object.keys(arrUpdate1).map(index => {
-        //     const item = arrUpdate1[index];
-        //     return `"${item}"`;
-        // });
-        // window.console.log(json);
-        window.console.log(arrUpdate1.join(','));
         if (this.state.pageType !== '1') {
             pageId = this.state.pageId;
         } else {
@@ -358,7 +353,7 @@ class PageEdit extends React.Component<Props, State> {
                             id: ${pageId},
                             title: "${this.state.title}",
                             alias: "${this.state.alias}",
-                            content: [${arrUpdate1.join(',')}],
+                            content: [${arrUpdate1}],
                             classify: "${this.state.classify}",
                             classifyId: ${this.state.classifyId},
                             limitNum: 10,
