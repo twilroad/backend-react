@@ -292,10 +292,19 @@ class PageEdit extends React.Component<Props, State> {
                 content: item.content,
             });
         });
+        window.console.log(arrUpdate);
         arrUpdate.forEach((sub: any) => {
             const ite = JSON.stringify(sub);
             arrUpdate1.push(ite);
+            // arrUpdate1.push(sub);
         });
+        window.console.log(arrUpdate1);
+        // const json = Object.keys(arrUpdate1).map(index => {
+        //     const item = arrUpdate1[index];
+        //     return `"${item}"`;
+        // });
+        // window.console.log(json);
+        window.console.log(arrUpdate1.join(','));
         if (this.state.pageType !== '1') {
             pageId = this.state.pageId;
         } else {
@@ -349,7 +358,7 @@ class PageEdit extends React.Component<Props, State> {
                             id: ${pageId},
                             title: "${this.state.title}",
                             alias: "${this.state.alias}",
-                            content: "[${arrUpdate1}]",
+                            content: [${arrUpdate1.join(',')}],
                             classify: "${this.state.classify}",
                             classifyId: ${this.state.classifyId},
                             limitNum: 10,
@@ -401,8 +410,13 @@ class PageEdit extends React.Component<Props, State> {
     handleRemoveEditor = (index: number) => {
         const arr = Object.assign([], this.state.list);
         arr.splice(index, 1);
+        arr.forEach((item: any, i: number) => {
+            item.num = i;
+        });
         this.setState({
             list: arr,
+            number: this.state.number - 1,
+            editorLength: this.state.editorLength - 1,
         });
     };
     handleChange = (name: any) => (event: any) => {
@@ -470,9 +484,11 @@ class PageEdit extends React.Component<Props, State> {
                                                     handleEditorChange={this.handleEditorChange}
                                                 />
                                                 {
-                                                    index === 0 ?
-                                                        <span onClick={this.handleAddEditor}>添加</span> :
-                                                        <span onClick={() => this.handleRemoveEditor(index)}>删除</span>}
+                                                    index > 0 &&
+                                                    <span onClick={() => this.handleRemoveEditor(index)}>删除</span>}
+                                                {
+                                                    index === this.state.list.length - 1 &&
+                                                        <span onClick={this.handleAddEditor}>添加</span>}
                                             </div>
                                         );
                                     })
