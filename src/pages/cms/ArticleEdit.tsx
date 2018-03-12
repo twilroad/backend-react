@@ -9,8 +9,7 @@ import Switch from 'material-ui/Switch';
 import Button from 'material-ui/Button';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
-// import moment from 'moment';
-import { DatePicker } from 'material-ui-pickers';
+import { DatePicker, DateTimePicker } from 'material-ui-pickers';
 import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import Cascader from 'antd/lib/cascader';
@@ -18,7 +17,6 @@ import 'antd/lib/cascader/style/css.js';
 import axios from 'axios';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
-// import base64Img from 'base64-img';
 
 const styles = {
     root: {
@@ -284,8 +282,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         });
     }
     handleDateChange = (date: any) => {
-        let currentTime = new Date(date).toLocaleDateString();
-        this.setState({ publishedTime: currentTime });
+        this.setState({ publishedTime: date });
     };
     handleChange = (name: any) => (event: any) => {
         let val = event.target.value;
@@ -612,13 +609,20 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                     <DatePicker
                                         className="data-picker"
                                         style={{marginBottom: '32px'}}
-                                        keyboard
-                                        clearable
-                                        format="MMMM Do, YYYY"
+                                        format="YYYY MMMM Do hh:mm"
                                         label="发布时间"
                                         value={this.state.publishedTime}
                                         onChange={this.handleDateChange}
-                                        animateYearScrolling={false}
+                                    />
+                                </MuiPickersUtilsProvider>
+                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                    <DateTimePicker
+                                        className="data-picker"
+                                        style={{marginBottom: '32px'}}
+                                        format="YYYY MMMM Do hh:mm"
+                                        label="结束时间"
+                                        value={this.state.publishedTime}
+                                        onChange={this.handleDateChange}
                                     />
                                 </MuiPickersUtilsProvider>
                                 <FormControl

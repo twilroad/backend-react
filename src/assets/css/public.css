@@ -160,6 +160,7 @@ body {
 }
 .data-picker > div > div > button {
     height: inherit;
+    margin-bottom: 12px;
 }
 .data-picker input {
     font-size: 16px;
