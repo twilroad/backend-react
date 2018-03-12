@@ -591,18 +591,21 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
                         message={<span id="message-id">{message}</span>}
                     />
                     <div className="table-pagination">
-                        <ReactPaginate
-                            previousLabel={'<'}
-                            nextLabel={'>'}
-                            breakLabel={<a href="javascript:;">...</a>}
-                            breakClassName={'break-me'}
-                            pageCount={totalItems / rowsPerPage}
-                            marginPagesDisplayed={2}
-                            pageRangeDisplayed={2}
-                            onPageChange={this.handlePageClick}
-                            containerClassName={'pagination'}
-                            activeClassName={'active'}
-                        />
+                        {
+                            this.state.totalItems > 0 &&
+                            <ReactPaginate
+                                previousLabel={'<'}
+                                nextLabel={'>'}
+                                breakLabel={<a href="javascript:;">...</a>}
+                                breakClassName={'break-me'}
+                                pageCount={totalItems / rowsPerPage}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={2}
+                                onPageChange={this.handlePageClick}
+                                containerClassName={'pagination'}
+                                activeClassName={'active'}
+                            />
+                        }
                     </div>
                 </Paper>
                 <Dialog

@@ -416,7 +416,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
     };
 
     render() {
-        const { currentPage, rowsPerPage, list, modalType, reductionType, openMessageTip, message } = this.state;
+        const { rowsPerPage, totalItems, list, modalType, reductionType, openMessageTip, message } = this.state;
         return (
             <div className="cms">
                 <div className="top-action-module clearfix">
@@ -470,8 +470,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
                                 </TableRow>
                             </TableHead>
                             <TableBody className="table-body">
-                                {list.slice(currentPage * rowsPerPage, rowsPerPage * currentPage + rowsPerPage)
-                                    .map((n, index) => {
+                                {list.map((n, index) => {
                                         return (
                                             <TableRow
                                                 hover
@@ -531,18 +530,21 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
                         message={<span id="message-id">{message}</span>}
                     />
                     <div className="table-pagination">
-                        <ReactPaginate
-                            previousLabel={'<'}
-                            nextLabel={'>'}
-                            breakLabel={<a href="javascript:;">...</a>}
-                            breakClassName={'break-me'}
-                            pageCount={list.length / rowsPerPage}
-                            marginPagesDisplayed={2}
-                            pageRangeDisplayed={2}
-                            onPageChange={this.handlePageClick}
-                            containerClassName={'pagination'}
-                            activeClassName={'active'}
-                        />
+                        {
+                            this.state.totalItems > 0 &&
+                            <ReactPaginate
+                                previousLabel={'<'}
+                                nextLabel={'>'}
+                                breakLabel={<a href="javascript:;">...</a>}
+                                breakClassName={'break-me'}
+                                pageCount={totalItems / rowsPerPage}
+                                marginPagesDisplayed={2}
+                                pageRangeDisplayed={2}
+                                onPageChange={this.handlePageClick}
+                                containerClassName={'pagination'}
+                                activeClassName={'active'}
+                            />
+                        }
                     </div>
                 </Paper>
                 <Dialog
