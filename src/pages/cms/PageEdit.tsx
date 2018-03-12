@@ -530,31 +530,12 @@ class PageEdit extends React.Component<Props, State> {
                                         value={this.state.classify}
                                     />
                                     <Cascader
+                                        changeOnSelect
                                         className="cascader-picker"
                                         options={this.state.types}
                                         onChange={this.handleChangeType}
                                         notFoundContent="Not Found"
                                     />
-                                    {/*<Select
-                                        className={this.props.classes.formLabelFont}
-                                        value={this.state.classify}
-                                        onChange={this.handleChangeType}
-                                        input={<Input name="classify" id="type-simple" />}
-                                    >
-                                        {
-                                            this.state.types.map((item: any, index: number) => {
-                                                return (
-                                                    <MenuItem
-                                                        className="input-drop-paper"
-                                                        value={item.id}
-                                                        key={index}
-                                                    >
-                                                        {item.type}
-                                                    </MenuItem>
-                                                );
-                                            })
-                                        }
-                                    </Select>*/}
                                 </FormControl>
                             </Grid>
                         </Grid>

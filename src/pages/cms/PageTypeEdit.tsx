@@ -498,6 +498,7 @@ class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, Stat
                                         value={this.state.classify}
                                     />
                                     <Cascader
+                                        changeOnSelect
                                         className="cascader-picker"
                                         options={this.state.types}
                                         onChange={this.handleChangeType}

@@ -528,6 +528,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         value={this.state.classify}
                                     />
                                     <Cascader
+                                        changeOnSelect
                                         className="cascader-picker"
                                         options={this.state.types}
                                         onChange={this.handleChangeType}
