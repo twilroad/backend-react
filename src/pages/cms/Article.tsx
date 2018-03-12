@@ -633,7 +633,50 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
         } else if (this.state.isTop === '1') {
             param = true;
         }
-        if (this.state.pageStatus) {
+        if (this.state.pageStatus && this.state.isTop === '0') {
+            axios.post('http://192.168.1.121:3000/graphql?', {
+                query: `
+                query {
+                    getArticlesLimit(serachArticle: {
+                        limitNum: 10,
+                        pages: 1,
+                        keyWords: "${this.state.keyword}",
+                        classifyId: ${this.state.classifyId},
+                    }){
+                        pagination{
+                            totalItems,
+                            currentPage,
+                            pageSize,
+                            totalPages,
+                            startPage,
+                            endPage,
+                            startIndex,
+                            endIndex,
+                            pages,
+                        },
+                        articles{
+                            id,
+                            check,
+                            name,
+                            classify,
+                            publishedTime,
+                        }
+                    }
+                }
+            `,
+            }).then(response => {
+                if (!response.data.errors) {
+                    const sub = response.data.data.getArticlesLimit;
+                    this.setState({
+                        list: sub.articles,
+                        totalItems: sub.pagination.totalItems,
+                        rowsPerPage: sub.pagination.pageSize,
+                        currentPage: sub.pagination.currentPage - 1,
+                        pageStatus: true,
+                    });
+                }
+            });
+        } else if (this.state.pageStatus && this.state.isTop !== '0') {
             axios.post('http://192.168.1.121:3000/graphql?', {
                 query: `
                 query {
@@ -673,7 +716,6 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                         totalItems: sub.pagination.totalItems,
                         rowsPerPage: sub.pagination.pageSize,
                         currentPage: sub.pagination.currentPage - 1,
-                        right: !this.state.right,
                         pageStatus: true,
                     });
                 }
