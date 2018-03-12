@@ -9,7 +9,7 @@ import Switch from 'material-ui/Switch';
 import Button from 'material-ui/Button';
 import { MenuItem } from 'material-ui/Menu';
 import Select from 'material-ui/Select';
-import { DatePicker, DateTimePicker } from 'material-ui-pickers';
+import { DateTimePicker } from 'material-ui-pickers';
 import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import Cascader from 'antd/lib/cascader';
@@ -65,6 +65,7 @@ type State = {
     topTypes: Array<any>,
     abstract: string,
     publishedTime: any,
+    endTime: any,
     sourceUrl: string,
     source: string,
     pageType: string,
@@ -126,6 +127,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             ],
             abstract: '',
             publishedTime: new Date(),
+            endTime: new Date(),
             sourceUrl: '',
             source: '',
             hidden: false,
@@ -162,6 +164,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                         hidden,
                         recycling,
                         publishedTime,
+                        endTime,
                         abstract,
                         content,
                         createAt,
@@ -284,6 +287,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
     handleDateChange = (date: any) => {
         this.setState({ publishedTime: date });
     };
+    handleEndDateChange = (date: any) => {
+        this.setState({ endTime: date });
+    };
     handleChange = (name: any) => (event: any) => {
         let val = event.target.value;
         this.setState({
@@ -318,6 +324,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             topPlace: ${self.state.topPlace},
                             hidden: ${self.state.hidden},
                             publishedTime: "${self.state.publishedTime}",
+                            endTime: "${self.state.endTime}",
                             source: "${self.state.source}",
                             sourceUrl: "${self.state.sourceUrl}",
                             pictureUpload:{
@@ -366,6 +373,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             topPlace: ${self.state.topPlace},
                             hidden: ${self.state.hidden},
                             publishedTime: "${self.state.publishedTime}",
+                            endTime: "${self.state.endTime}",
                             source: "${self.state.source}",
                             sourceUrl: "${self.state.sourceUrl}",
                             pictureUpload:{
@@ -606,7 +614,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                     }
                                 />
                                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <DatePicker
+                                    <DateTimePicker
                                         className="data-picker"
                                         style={{marginBottom: '32px'}}
                                         format="YYYY MMMM Do hh:mm"
@@ -621,8 +629,8 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         style={{marginBottom: '32px'}}
                                         format="YYYY MMMM Do hh:mm"
                                         label="结束时间"
-                                        value={this.state.publishedTime}
-                                        onChange={this.handleDateChange}
+                                        value={this.state.endTime}
+                                        onChange={this.handleEndDateChange}
                                     />
                                 </MuiPickersUtilsProvider>
                                 <FormControl
