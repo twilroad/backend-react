@@ -639,7 +639,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                 query {
                     getArticlesLimit(serachArticle: {
                         limitNum: 10,
-                        pages: 1,
+                        pages: ${data.selected + 1},
                         keyWords: "${this.state.keyword}",
                         classifyId: ${this.state.classifyId},
                     }){
@@ -682,7 +682,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                 query {
                     getArticlesLimit(serachArticle: {
                         limitNum: 10,
-                        pages: 1,
+                        pages: ${data.selected + 1},
                         keyWords: "${this.state.keyword}",
                         classifyId: ${this.state.classifyId},
                         topPlace: ${param},

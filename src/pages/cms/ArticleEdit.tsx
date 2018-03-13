@@ -173,6 +173,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                         recycling,
                         publishedTime,
                         endTime,
+                        startTime,
                         peopleNum,
                         organizer,
                         activityAddress,
@@ -202,6 +203,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     classify: data.classify,
                     publishedTime: data.publishedTime,
                     endTime: data.endTime,
+                    startTime: data.startTime,
                     peopleNum: data.peopleNum,
                     organizer: data.organizer,
                     activityAddress: data.activityAddress,
@@ -302,6 +304,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
     handleDateChange = (date: any) => {
         this.setState({ publishedTime: date });
     };
+    handleStartDateChange = (date: any) => {
+        this.setState({ startTime: date });
+    };
     handleEndDateChange = (date: any) => {
         this.setState({ endTime: date });
     };
@@ -343,6 +348,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             hidden: ${self.state.hidden},
                             publishedTime: "${self.state.publishedTime}",
                             endTime: "${self.state.endTime}",
+                            startTime: "${self.state.startTime}",
                             peopleNum: ${self.state.peopleNum},
                             organizer: "${self.state.organizer}",
                             activityAddress: "${self.state.activityAddress}"
@@ -395,6 +401,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                              hidden: ${self.state.hidden},
                              publishedTime: "${self.state.publishedTime}",
                              endTime: "${self.state.endTime}",
+                             startTime: "${self.state.startTime}",
                              peopleNum: ${self.state.peopleNum},
                              organizer: "${self.state.organizer}",
                              activityAddress: "${self.state.activityAddress}"
@@ -641,6 +648,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                     <DateTimePicker
                                         className="data-picker"
                                         style={{marginBottom: '32px'}}
+                                        autoOk
+                                        ampm={false}
+                                        showTabs={false}
+                                        autoSubmit={false}
+                                        disableFuture
                                         format="YYYY MMMM Do hh:mm"
                                         label="发布时间"
                                         value={this.state.publishedTime}
@@ -654,17 +666,25 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                             <DateTimePicker
                                                 className="data-picker"
                                                 style={{marginBottom: '32px'}}
-                                                format="YYYY MMMM Do hh:mm"
+                                                autoOk
+                                                ampm={false}
+                                                showTabs={false}
+                                                autoSubmit={false}
+                                                disableFuture
                                                 label="开始时间"
                                                 value={this.state.startTime}
-                                                onChange={this.handleEndDateChange}
+                                                onChange={this.handleStartDateChange}
                                             />
                                         </MuiPickersUtilsProvider>
                                         <MuiPickersUtilsProvider utils={DateFnsUtils}>
                                             <DateTimePicker
                                                 className="data-picker"
                                                 style={{marginBottom: '32px'}}
-                                                format="YYYY MMMM Do hh:mm"
+                                                autoOk
+                                                ampm={false}
+                                                showTabs={false}
+                                                autoSubmit={false}
+                                                disableFuture
                                                 label="结束时间"
                                                 value={this.state.endTime}
                                                 onChange={this.handleEndDateChange}
