@@ -65,7 +65,11 @@ type State = {
     topTypes: Array<any>,
     abstract: string,
     publishedTime: any,
+    startTime: any,
     endTime: any,
+    peopleNum: number,
+    organizer: string,
+    activityAddress: string,
     sourceUrl: string,
     source: string,
     pageType: string,
@@ -127,7 +131,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             ],
             abstract: '',
             publishedTime: new Date(),
+            startTime: new Date(),
             endTime: new Date(),
+            peopleNum: 1,
+            organizer: '',
+            activityAddress: '',
             sourceUrl: '',
             source: '',
             hidden: false,
@@ -165,6 +173,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                         recycling,
                         publishedTime,
                         endTime,
+                        peopleNum,
+                        organizer,
+                        activityAddress,
                         abstract,
                         content,
                         createAt,
@@ -191,6 +202,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     classify: data.classify,
                     publishedTime: data.publishedTime,
                     endTime: data.endTime,
+                    peopleNum: data.peopleNum,
+                    organizer: data.organizer,
+                    activityAddress: data.activityAddress,
                     source: data.source,
                     sourceUrl: data.sourceUrl,
                     topPlace: data.topPlace,
@@ -329,6 +343,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             hidden: ${self.state.hidden},
                             publishedTime: "${self.state.publishedTime}",
                             endTime: "${self.state.endTime}",
+                            peopleNum: ${self.state.peopleNum},
+                            organizer: "${self.state.organizer}",
+                            activityAddress: "${self.state.activityAddress}"
                             source: "${self.state.source}",
                             sourceUrl: "${self.state.sourceUrl}",
                             pictureUpload:{
@@ -368,24 +385,27 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                 query: `
                     mutation {
                          ArticleCU(updateArt: {
-                            id: ${pageId},
-                            name: "${self.state.name}",
-                            content: "${str2}",
-                            classify: "${self.state.classify}",
-                            classifyId: ${self.state.classifyId},
-                            abstract: "${self.state.abstract}",
-                            topPlace: ${self.state.topPlace},
-                            hidden: ${self.state.hidden},
-                            publishedTime: "${self.state.publishedTime}",
-                            endTime: "${self.state.endTime}",
-                            source: "${self.state.source}",
-                            sourceUrl: "${self.state.sourceUrl}",
-                            pictureUpload:{
-                                bucketName: "public",
-                                rawName: "${self.state.img}",
-                                base64: "${this.state.baseImg}",
+                             id: ${pageId},
+                             name: "${self.state.name}",
+                             content: "${str2}",
+                             classify: "${self.state.classify}",
+                             classifyId: ${self.state.classifyId},
+                             abstract: "${self.state.abstract}",
+                             topPlace: ${self.state.topPlace},
+                             hidden: ${self.state.hidden},
+                             publishedTime: "${self.state.publishedTime}",
+                             endTime: "${self.state.endTime}",
+                             peopleNum: ${self.state.peopleNum},
+                             organizer: "${self.state.organizer}",
+                             activityAddress: "${self.state.activityAddress}"
+                             source: "${self.state.source}",
+                             sourceUrl: "${self.state.sourceUrl}",
+                             pictureUpload:{
+                                 bucketName: "public",
+                                 rawName: "${self.state.img}",
+                                 base64: "${this.state.baseImg}",
                             },
-                        })
+                        }) 
                     }
                 `,
             }).then(response => {
@@ -627,16 +647,85 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         onChange={this.handleDateChange}
                                     />
                                 </MuiPickersUtilsProvider>
-                                <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                                    <DateTimePicker
-                                        className="data-picker"
-                                        style={{marginBottom: '32px'}}
-                                        format="YYYY MMMM Do hh:mm"
-                                        label="结束时间"
-                                        value={this.state.endTime}
-                                        onChange={this.handleEndDateChange}
-                                    />
-                                </MuiPickersUtilsProvider>
+                                {
+                                    this.state.classify === '活动' &&
+                                    <div>
+                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                            <DateTimePicker
+                                                className="data-picker"
+                                                style={{marginBottom: '32px'}}
+                                                format="YYYY MMMM Do hh:mm"
+                                                label="开始时间"
+                                                value={this.state.startTime}
+                                                onChange={this.handleEndDateChange}
+                                            />
+                                        </MuiPickersUtilsProvider>
+                                        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                                            <DateTimePicker
+                                                className="data-picker"
+                                                style={{marginBottom: '32px'}}
+                                                format="YYYY MMMM Do hh:mm"
+                                                label="结束时间"
+                                                value={this.state.endTime}
+                                                onChange={this.handleEndDateChange}
+                                            />
+                                        </MuiPickersUtilsProvider>
+                                        <FormControl
+                                            fullWidth
+                                            className={this.props.classes.formControlMargin}
+                                        >
+                                            <InputLabel
+                                                className={this.props.classes.formLabelFont}
+                                            >
+                                                活动地址
+                                            </InputLabel>
+                                            <Input
+                                                className={this.props.classes.formLabelFont}
+                                                classes={{
+                                                    underline: this.props.classes.underline,
+                                                }}
+                                                onChange={this.handleChange('activityAddress')}
+                                                value={this.state.activityAddress}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            fullWidth
+                                            className={this.props.classes.formControlMargin}
+                                        >
+                                            <InputLabel
+                                                className={this.props.classes.formLabelFont}
+                                            >
+                                                主办单位
+                                            </InputLabel>
+                                            <Input
+                                                className={this.props.classes.formLabelFont}
+                                                classes={{
+                                                    underline: this.props.classes.underline,
+                                                }}
+                                                onChange={this.handleChange('organizer')}
+                                                value={this.state.organizer}
+                                            />
+                                        </FormControl>
+                                        <FormControl
+                                            fullWidth
+                                            className={this.props.classes.formControlMargin}
+                                        >
+                                            <InputLabel
+                                                className={this.props.classes.formLabelFont}
+                                            >
+                                                活动人数
+                                            </InputLabel>
+                                            <Input
+                                                className={this.props.classes.formLabelFont}
+                                                classes={{
+                                                    underline: this.props.classes.underline,
+                                                }}
+                                                onChange={this.handleChange('peopleNum')}
+                                                value={this.state.peopleNum}
+                                            />
+                                        </FormControl>
+                                    </div>
+                                }
                                 <FormControl
                                     fullWidth
                                     className={this.props.classes.formControlMargin}
