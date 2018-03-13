@@ -82,6 +82,7 @@
         "eject": "react-scripts-ts eject"
     },
     "workspaces": [
-        "pacakges/@types/jss"
+        "pacakges/@types/jss",
+        "pacakges/react-popper"
     ]
 }
