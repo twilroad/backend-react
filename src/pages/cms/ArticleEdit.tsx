@@ -190,6 +190,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     classifyId: data.classifyId,
                     classify: data.classify,
                     publishedTime: data.publishedTime,
+                    endTime: data.endTime,
                     source: data.source,
                     sourceUrl: data.sourceUrl,
                     topPlace: data.topPlace,
@@ -311,6 +312,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         } else {
             pageId = 0;
         }
+        const str = self.state.editor.content.replace(/"/g, '\\"');
+        const str1 = str.replace(/“/g, '\\"');
+        const str2 = str1.replace(/”/g, '\\"');
         if (self.state.pageType === '1') {
             axios.post('http://192.168.1.121:3000/graphql?', {
                 query: `
@@ -320,7 +324,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             classify: "${self.state.classify}",
                             classifyId: ${self.state.classifyId},
                             abstract: "${self.state.abstract}",
-                            content: "${self.state.editor.content}",
+                            content: "${str2}",
                             topPlace: ${self.state.topPlace},
                             hidden: ${self.state.hidden},
                             publishedTime: "${self.state.publishedTime}",
@@ -366,7 +370,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                          ArticleCU(updateArt: {
                             id: ${pageId},
                             name: "${self.state.name}",
-                            content: "${self.state.editor.content}",
+                            content: "${str2}",
                             classify: "${self.state.classify}",
                             classifyId: ${self.state.classifyId},
                             abstract: "${self.state.abstract}",
