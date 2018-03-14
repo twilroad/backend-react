@@ -652,7 +652,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         ampm={false}
                                         showTabs={false}
                                         autoSubmit={false}
-                                        disableFuture
                                         format="YYYY MMMM Do hh:mm"
                                         label="发布时间"
                                         value={this.state.publishedTime}
@@ -670,7 +669,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                                 ampm={false}
                                                 showTabs={false}
                                                 autoSubmit={false}
-                                                disableFuture
                                                 label="开始时间"
                                                 value={this.state.startTime}
                                                 onChange={this.handleStartDateChange}
@@ -684,7 +682,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                                 ampm={false}
                                                 showTabs={false}
                                                 autoSubmit={false}
-                                                disableFuture
                                                 label="结束时间"
                                                 value={this.state.endTime}
                                                 onChange={this.handleEndDateChange}

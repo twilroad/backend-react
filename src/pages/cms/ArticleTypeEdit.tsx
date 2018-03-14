@@ -1,16 +1,16 @@
 import * as React from 'react';
 import withStyles, { WithStyles } from 'material-ui/styles/withStyles';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
-import ReactPaginate from 'react-paginate';
+// import ReactPaginate from 'react-paginate';
 import { FormControlLabel, FormControl } from 'material-ui/Form';
 import Input, { InputLabel } from 'material-ui/Input';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import DeleteIcon from 'material-ui-icons/Delete';
-import ModeEdit from 'material-ui-icons/ModeEdit';
-import ClearIcon from 'material-ui-icons/Clear';
+// import IconButton from 'material-ui/IconButton';
+// import DeleteIcon from 'material-ui-icons/Delete';
+// import ModeEdit from 'material-ui-icons/ModeEdit';
+// import ClearIcon from 'material-ui-icons/Clear';
 import ColorPicker from 'rc-color-picker';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Switch from 'material-ui/Switch';
@@ -19,17 +19,17 @@ import { CircularProgress } from 'material-ui/Progress';
 import Cascader from 'antd/lib/cascader';
 import Snackbar from 'material-ui/Snackbar';
 import 'antd/lib/cascader/style/css.js';
-import Table, {
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-} from 'material-ui/Table';
-import Dialog, {
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-} from 'material-ui/Dialog';
+// import Table, {
+//     TableBody,
+//     TableCell,
+//     TableHead,
+//     TableRow,
+// } from 'material-ui/Table';
+// import Dialog, {
+//     DialogActions,
+//     DialogContent,
+//     DialogTitle,
+// } from 'material-ui/Dialog';
 import axios from 'axios';
 
 const styles = {
@@ -522,7 +522,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
         this.setState({ currentPage: data.selected });
     };
     render() {
-        const { currentPage, rowsPerPage, list } = this.state;
+        // const { currentPage, rowsPerPage, list } = this.state;
         return (
             <div className="configurations">
                 <p className="crumbs">
@@ -543,10 +543,10 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                             label="基础信息"
                             className="paper-tab"
                         />
-                        <Tab
+                       {/* <Tab
                             label="扩展信息"
                             className="paper-tab"
-                        />
+                        />*/}
                     </Tabs>
                     {
                         this.state.tab === 0 &&
@@ -807,7 +807,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                             </Button>
                         </form>
                     }
-                    {
+                   {/* {
                         this.state.tab === 1 &&
                         <div className={this.props.classes.container}>
                             <Button className={this.props.classes.createBtn}>
@@ -937,7 +937,7 @@ class ArticleTypeEdit extends React.Component<WithStyles<keyof typeof styles>, S
                                 </DialogActions>
                             </Dialog>
                         </div>
-                    }
+                    }*/}
                 </Paper>
                 <Snackbar
                     classes={{
