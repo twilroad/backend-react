@@ -59,7 +59,7 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
                             activityName,
                             eventDate,
                             startTime,
-                            endTime:,
+                            endTime,
                             peopleScale,
                             siteSelection,
                             equipment,
@@ -75,8 +75,30 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
         }).then(response => {
             if (!response.data.errors) {
                 const data = response.data.data.getAllSites;
+                const arr = Object.assign([], data.sites);
+                arr.forEach((item: any) => {
+                    const str = item.startTime.replace('T', ' ');
+                    const str1 = item.endTime.replace('T', ' ');
+                    item.startTime = str.replace(':00.000Z', '');
+                    item.endTime = str1.replace(':00.000Z', '');
+                    if (item.peopleScale === 'lessTen') {
+                        item.peopleScale = '10人以内';
+                    } else if (item.peopleScale === 'lessTwenty') {
+                        item.peopleScale = '10-20人';
+                    } else if (item.peopleScale === 'lessFifty') {
+                        item.peopleScale = '20-50人';
+                    } else if (item.peopleScale === 'lessHundred') {
+                        item.peopleScale = '50-100人';
+                    } else if (item.peopleScale === 'moreThanHundrend') {
+                        item.peopleScale = '100人以上';
+                    }
+                    const site = item.siteSelection.replace('{"', '');
+                    const equi = item.equipment.replace('{"', '');
+                    item.siteSelection = site.replace('"}', '');
+                    item.equipment = equi.replace('"}', '');
+                });
                 this.setState({
-                    list: data.sites,
+                    list: arr,
                     totalItems: data.pagination.totalItems,
                     rowsPerPage: data.pagination.pageSize,
                     currentPage: data.pagination.currentPage - 1,
@@ -110,7 +132,7 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
                             activityName,
                             eventDate,
                             startTime,
-                            endTime:,
+                            endTime,
                             peopleScale,
                             siteSelection,
                             equipment,
@@ -126,8 +148,30 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
         }).then(response => {
             if (!response.data.errors) {
                 const res = response.data.data.getAllSites;
+                const arr = Object.assign([], res.sites);
+                arr.forEach((item: any) => {
+                    const str = item.startTime.replace('T', ' ');
+                    const str1 = item.endTime.replace('T', ' ');
+                    item.startTime = str.replace(':00.000Z', '');
+                    item.endTime = str1.replace(':00.000Z', '');
+                    if (item.peopleScale === 'lessTen') {
+                        item.peopleScale = '10人以内';
+                    } else if (item.peopleScale === 'lessTwenty') {
+                        item.peopleScale = '10-20人';
+                    } else if (item.peopleScale === 'lessFifty') {
+                        item.peopleScale = '20-50人';
+                    } else if (item.peopleScale === 'lessHundred') {
+                        item.peopleScale = '50-100人';
+                    } else if (item.peopleScale === 'moreThanHundrend') {
+                        item.peopleScale = '100人以上';
+                    }
+                    const site = item.siteSelection.replace('{"', '');
+                    const equi = item.equipment.replace('{"', '');
+                    item.siteSelection = site.replace('"}', '');
+                    item.equipment = equi.replace('"}', '');
+                });
                 this.setState({
-                    list: res.sites,
+                    list: arr,
                     totalItems: res.pagination.totalItems,
                     rowsPerPage: res.pagination.pageSize,
                     currentPage: res.pagination.currentPage - 1,
@@ -191,8 +235,8 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
                                             unmountOnExit
                                             className="collapse-msg"
                                         >
-                                            <span>活动开始时间：{new Date(n.startTime).toLocaleDateString()}</span>
-                                            <span>活动结束时间：{new Date(n.endTime).toLocaleDateString()}</span>
+                                            <span>活动开始时间：{n.startTime}</span>
+                                            <span>活动结束时间：{n.endTime}</span>
                                             <span>人数规模：{n.peopleScale}</span>
                                             <span>场地选择：{n.siteSelection}</span>
                                             <span>借用设备登记：{n.equipment}</span>
