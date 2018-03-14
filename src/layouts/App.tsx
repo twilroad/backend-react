@@ -35,6 +35,9 @@ import PageEdit from '../pages/cms/PageEdit';
 import PageType from '../pages/cms/PageType';
 import PageTypeEdit from '../pages/cms/PageTypeEdit';
 import Message from '../pages/cms/Message';
+import MessageSettled from '../pages/cms/MessageSettled';
+import MessageRent from '../pages/cms/MessageRent';
+import MessageVisit from '../pages/cms/MessageVisit';
 
 import Drawer from 'material-ui/Drawer';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
@@ -382,9 +385,27 @@ class App extends React.Component<Props, State> {
                         index: 3,
                         icon: 'chat_bubble',
                         children: [
-                            {
+                            /*{
                                 'name': '客户留言',
                                 'path': '/cms/message',
+                                'open': false,
+                                'children': [],
+                            },*/
+                            {
+                                'name': '入驻信息',
+                                'path': '/settled',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '场地租用',
+                                'path': '/rent',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '参观预约',
+                                'path': '/visit',
                                 'open': false,
                                 'children': [],
                             },
@@ -841,6 +862,9 @@ class App extends React.Component<Props, State> {
                                                 <Route exact path="/cms/page/type" component={PageType}/>
                                                 <Route exact path="/cms/page/type/edit/:id" component={PageTypeEdit}/>
                                                 <Route exact path="/cms/message" component={Message}/>
+                                                <Route exact path="/settled" component={MessageSettled}/>
+                                                <Route exact path="/rent" component={MessageRent}/>
+                                                <Route exact path="/visit" component={MessageVisit}/>
                                                 <Route path="/" render={() => (<Redirect to="/home"/>)}/>
                                             </Switch>
                                         </div>

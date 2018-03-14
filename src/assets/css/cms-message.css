@@ -14,10 +14,11 @@
 .cms-message .table-body li .collapse-msg > div > div {
     padding: 18px 0;
 }
+.cms-message .table-body li .collapse-msg > div > div span {
+    margin-right: 40px;
+}
 .cms-message .table-body li > div:first-child > div{
     display: inline-block;
-    height: 50px;
-    line-height: 50px;
 }
 .cms-message .table-body li > div:first-child > div:first-child {
     width: 40px;
