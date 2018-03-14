@@ -184,7 +184,7 @@ class MessageVisit extends React.Component<WithStyles<keyof typeof styles>, Stat
                                             <span>公司名称：{n.companyName}</span>
                                             <span>所属行业：{n.industryInvolved}</span>
                                             <span>公司人数：{n.employees}人</span>
-                                            <span>预约日期：{n.appointmentDate}</span>
+                                            <span>预约日期：{new Date(n.appointmentDate).toLocaleDateString()}</span>
                                         </Collapse>
                                     </li>
                                 );

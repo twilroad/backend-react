@@ -183,7 +183,7 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
                                             <div>{n.applicant}</div>
                                             <div>{n.telPhone}</div>
                                             <div>{n.activityName}</div>
-                                            <div>{n.eventDate}</div>
+                                            <div>{new Date(n.eventDate).toLocaleDateString()}</div>
                                         </div>
                                         <Collapse
                                             in={n.collapse}
@@ -191,8 +191,8 @@ class MessageRent extends React.Component<WithStyles<keyof typeof styles>, State
                                             unmountOnExit
                                             className="collapse-msg"
                                         >
-                                            <span>活动开始时间：{n.startTime}</span>
-                                            <span>活动结束时间：{n.endTime}</span>
+                                            <span>活动开始时间：{new Date(n.startTime).toLocaleDateString()}</span>
+                                            <span>活动结束时间：{new Date(n.endTime).toLocaleDateString()}</span>
                                             <span>人数规模：{n.peopleScale}</span>
                                             <span>场地选择：{n.siteSelection}</span>
                                             <span>借用设备登记：{n.equipment}</span>
