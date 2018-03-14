@@ -9,7 +9,7 @@
     line-height: 50px;
 }
 .cms-message .table-body li .collapse-msg {
-    padding-left: 40px;
+    padding: 0 40px;
 }
 .cms-message .table-body li .collapse-msg > div > div {
     padding: 18px 0;
