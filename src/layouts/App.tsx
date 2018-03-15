@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Switch } from 'react-router';
+import { Route, RouteComponentProps } from 'react-router';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
@@ -56,17 +57,33 @@ import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
 import 'react-select/dist/react-select.css';
 import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
+import { connect } from 'react-redux';
 
-type State = {
-    current: number,
-    fullScreen: boolean,
-    open: boolean,
-    navs: Array<any>,
-    user: object,
-    openSearch: boolean,
-    selectedOption: object,
-    selectOptions: Array<any>,
-};
+import HomePage from '../pages/HomePage';
+import TodoPage from '../pages/TodoPage';
+import { Todo } from '../model/model';
+import { RootState } from '../reducers/index';
+
+export namespace App {
+    export interface Props extends RouteComponentProps<void> {
+        todoList: Todo[];
+        history: History;
+        open: boolean;
+        width: string;
+    }
+
+    export interface State {
+        current: number;
+        fullScreen: boolean;
+        open: boolean;
+        navs: Array<any>;
+        user: object;
+        openSearch: boolean;
+        selectedOption: object;
+        selectOptions: Array<any>;
+    }
+}
+const history = createHashHistory();
 const drawerWidth = 260;
 const styles = (theme: Theme): StyleRules => ({
     drawerDocked: {
@@ -182,13 +199,8 @@ const styles = (theme: Theme): StyleRules => ({
 
 const stylesType = {} as StyleRules;
 
-interface Props extends WithStyles<keyof typeof stylesType> {
-    history: History;
-    open: boolean;
-    width: string;
-}
+class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Props, App.State> {
 
-class App extends React.Component<Props, State> {
     state = {
         open: true,
         current: 0,
@@ -522,7 +534,7 @@ class App extends React.Component<Props, State> {
     };
     handleChangeSelect = (selectedOption: any) => {
         this.setState({ selectedOption });
-        createHashHistory().push(selectedOption.url);
+        history.push(selectedOption.url);
     };
     componentDidMount() {
         axios.get('./config.json').then((response: any) => {
@@ -865,6 +877,8 @@ class App extends React.Component<Props, State> {
                                                 <Route exact path="/settled" component={MessageSettled}/>
                                                 <Route exact path="/rent" component={MessageRent}/>
                                                 <Route exact path="/visit" component={MessageVisit}/>
+                                                <Route exact={true} path="/homepage" component={HomePage} />
+                                                <Route exact={true} path="/todo" component={TodoPage} />
                                                 <Route path="/" render={() => (<Redirect to="/home"/>)}/>
                                             </Switch>
                                         </div>
@@ -878,4 +892,9 @@ class App extends React.Component<Props, State> {
         );
     }
 }
-export default compose(withStyles(styles), withWidth())(App);
+function mapStateToProps(state: RootState) {
+    return {
+        todoList: state.todoList
+    };
+}
+export default compose(withStyles(styles), withWidth())(connect(mapStateToProps)(App));
