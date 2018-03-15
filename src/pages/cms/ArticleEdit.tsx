@@ -17,6 +17,8 @@ import 'antd/lib/cascader/style/css.js';
 import axios from 'axios';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
+import IconButton from 'material-ui/IconButton';
+import PhotoCamera from 'material-ui-icons/PhotoCamera';
 
 const styles = {
     root: {
@@ -53,6 +55,15 @@ const styles = {
         'height': 'inherit',
     },
     editor: {},
+    menuBtn: {
+        'width': '30px',
+        'height': '30px',
+        'border-radius': '50%',
+        'background-color': '#000',
+        'opacity': 0.3,
+        'color': '#fff',
+        'cursor': 'pointer',
+    },
 };
 type State = {
     name: string,
@@ -82,6 +93,10 @@ type State = {
     transition: any,
     errorMessage: string,
     error: boolean,
+    bucketName: string,
+    pictureName: string,
+    type: string,
+    imgUrl: string,
 };
 
 class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State> {
@@ -151,6 +166,10 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             open: false,
             errorMessage: '',
             error: false,
+            bucketName: '',
+            pictureName: '',
+            type: '',
+            imgUrl: '',
         };
     }
     componentDidMount() {
@@ -188,16 +207,9 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             `,
             }).then(response => {
                 const data = response.data.data.getArticlesNoLimit[0];
-                let imgStr = '';
-                if (data.pictureUrl !== null) {
-                    imgStr = data.pictureUrl.substring(
-                        data.pictureUrl.indexOf('public/') + 7, data.pictureUrl.indexOf('?'));
-                } else if (data.pictureUrl === null) {
-                    imgStr = '';
-                }
                 this.setState({
                     name: data.name,
-                    img: imgStr,
+                    imgUrl: data.pictureUrl,
                     abstract: data.abstract,
                     classifyId: data.classifyId,
                     classify: data.classify,
@@ -332,6 +344,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             pageId = 0;
         }
         const str = self.state.editor.content.replace(/"/g, '\\"');
+        const pictureStr = self.state.imgUrl.replace(/"/g, '\\"');
         const str1 = str.replace(/“/g, '\\"');
         const str2 = str1.replace(/”/g, '\\"');
         if (self.state.pageType === '1') {
@@ -354,11 +367,10 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             activityAddress: "${self.state.activityAddress}"
                             source: "${self.state.source}",
                             sourceUrl: "${self.state.sourceUrl}",
-                            pictureUpload:{
-                                bucketName: "public",
-                                rawName: "${self.state.img}",
-                                base64: "${this.state.baseImg}",
-                            },
+                            pictureUrl: "${pictureStr}",
+                            bucketName: "${self.state.bucketName}",
+                            pictureName: "${self.state.pictureName}",
+                            type: "${self.state.type}",
                         })
                     }
                 `,
@@ -407,12 +419,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                              activityAddress: "${self.state.activityAddress}"
                              source: "${self.state.source}",
                              sourceUrl: "${self.state.sourceUrl}",
-                             pictureUpload:{
-                                 bucketName: "public",
-                                 rawName: "${self.state.img}",
-                                 base64: "${this.state.baseImg}",
-                            },
-                        }) 
+                             pictureUrl: "${pictureStr}",
+                             bucketName: "${self.state.bucketName}",
+                             pictureName: "${self.state.pictureName}",
+                             type: "${self.state.type}",
+                        })
                     }
                 `,
             }).then(response => {
@@ -443,6 +454,12 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
     };
     getImgURL = (event: any) => {
         const self = this;
+        let id = 0;
+        if (self.state.pageType !== '1') {
+            id = self.state.pageId;
+        } else {
+            id = 0;
+        }
         self.setState({
             img: event.target.value.substr(12),
         });
@@ -461,10 +478,39 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     self.setState({
                         baseImg: reader.result.substring(reader.result.indexOf(',') + 1),
                     });
+                    if (reader.result) {
+                        axios.post('http://192.168.1.121:3000/graphql?', {
+                            query: `
+                            mutation {
+                                ArticleCU(pictureUpload: {
+                                    id: ${id},
+                                    bucketName: "public",
+                                    rawName: "${self.state.img}",
+                                    base64: "${reader.result.substring(reader.result.indexOf(',') + 1)}",
+                                })
+                            }
+                        `,
+                        }).then(response => {
+                            const data = JSON.parse(response.data.data.ArticleCU);
+                            if (!response.data.errors) {
+                                self.setState(
+                                    {
+                                        error: false,
+                                        open: true,
+                                        loading: false,
+                                        errorMessage: data.MessageCodeError,
+                                        imgUrl: data.pictureUrl,
+                                        bucketName: data.bucketName,
+                                        pictureName: data.pictureName,
+                                        type: data.type,
+                                    },
+                                );
+                            }
+                        });
+                    }
                 }
             };
         }
-
     };
     handleChangeType = (value: any, select: any) => {
         this.setState({
@@ -524,32 +570,6 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                 <FormControl
                                     fullWidth
                                     className={this.props.classes.formControlMargin}
-                                    style={{ position: 'relative'}}
-                                >
-                                    <InputLabel
-                                        className={this.props.classes.formLabelFont}
-                                    >
-                                        缩略图
-                                    </InputLabel>
-                                    <Input
-                                        className={this.props.classes.formLabelFont}
-                                        classes={{
-                                            underline: this.props.classes.underline,
-                                        }}
-                                        value={this.state.img}
-                                    />
-                                    <Input
-                                        type="file"
-                                        className="upload-image"
-                                        onChange={this.getImgURL}
-                                        classes={{
-                                            underline: this.props.classes.underline,
-                                        }}
-                                    />
-                                </FormControl>
-                                <FormControl
-                                    fullWidth
-                                    className={this.props.classes.formControlMargin}
                                 >
                                     <InputLabel
                                         className={this.props.classes.formLabelFont}
@@ -570,6 +590,32 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         onChange={this.handleChangeType}
                                         notFoundContent="Not Found"
                                     />
+                                </FormControl>
+                                <FormControl
+                                    fullWidth
+                                    className={this.props.classes.formControlMargin}
+                                >
+                                    <span style={{fontSize: '16px', color: 'rgba(0, 0, 0, 0.54)'}}>缩略图</span>
+                                    <div className="upload-img">
+                                        {
+                                            this.state.imgUrl &&
+                                            <img src={this.state.imgUrl} alt=""/>
+                                        }
+                                        <IconButton
+                                            className={this.props.classes.menuBtn}
+                                            style={{ position: 'absolute', top: '6px', right: '6px' }}
+                                        >
+                                            <PhotoCamera />
+                                        </IconButton>
+                                        <Input
+                                            type="file"
+                                            className="upload-image"
+                                            onChange={this.getImgURL}
+                                            classes={{
+                                                underline: this.props.classes.underline,
+                                            }}
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormControl
                                     fullWidth
