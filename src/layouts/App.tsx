@@ -1,6 +1,5 @@
 import * as React from 'react';
-import { Redirect, Switch } from 'react-router';
-import { Route, RouteComponentProps } from 'react-router';
+import { Redirect, Route, Switch } from 'react-router';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
@@ -200,7 +199,6 @@ const styles = (theme: Theme): StyleRules => ({
 const stylesType = {} as StyleRules;
 
 class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Props, App.State> {
-
     state = {
         open: true,
         current: 0,
@@ -537,8 +535,10 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
         history.push(selectedOption.url);
     };
     componentDidMount() {
-        axios.get('./config.json').then((response: any) => {
-            window.console.log(response);
+        axios.get('./config.json').then((response: Configuration) => {
+            if (response.data && response.data.global && response.data.global.http) {
+                window.console.log(response.data.global.http);
+            }
         });
     }
     render() {
