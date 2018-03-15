@@ -32,6 +32,7 @@ class TodoDialog extends React.Component<WithStyles & TodoDialog.Props> {
 
     handleClose = () => {
         this.props.actions.addTodo({ id: Math.random(), completed: false, text: this.state.newTodoText });
+        this.props.actions.setSetting({ key: Math.random().toString(), value: Math.random().toString() });
         this.props.onClose();
     };
 

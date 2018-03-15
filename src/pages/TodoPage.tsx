@@ -7,13 +7,14 @@ import { RootState } from '../reducers/index';
 import * as TodoActions from '../actions/todo';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Todo } from '../model/model';
+import { Setting, Todo } from '../model/model';
 import { RouteComponentProps } from 'react-router';
 import Grid from 'material-ui/Grid';
 import TodoDialog from '../components/TodoDialog';
 
 export namespace TodoPage {
   export interface Props extends RouteComponentProps<void> {
+    settings: Setting[];
     todoList: Todo[];
     actions: typeof TodoActions;
   }
@@ -67,7 +68,8 @@ const styles: StyleRulesCallback = theme => ({
 
 function mapStateToProps(state: RootState) {
   return {
-    todoList: state.todoList
+    settings: state.settings,
+    todoList: state.todoList,
   };
 }
 

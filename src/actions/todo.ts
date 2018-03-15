@@ -1,4 +1,4 @@
-import { Action, ActionType, Todo } from '../model/model';
+import { Action, ActionType, Setting, Todo } from '../model/model';
 
 export function addTodo(todo: Todo): Action<Todo> {
 
@@ -32,5 +32,12 @@ export function deleteTodo(todoId: number): Action<number> {
     return {
         type: ActionType.DELETE_TODO,
         payload: todoId
+    };
+}
+
+export function setSetting(setting: Setting): Action<Setting> {
+    return {
+        type: ActionType.SET_SETTING,
+        payload: setting,
     };
 }

@@ -1,8 +1,10 @@
 import createReducer from './createReducer';
-import { Action, ActionType, Todo } from '../model/model';
+import { Action, ActionType, Setting, Todo } from '../model/model';
 
 export const todoList = createReducer([], {
     [ActionType.ADD_TODO](state: Array<Todo>, action: Action<Todo>) {
+        window.console.log('as', state);
+
         return [...state, action.payload];
     },
     [ActionType.COMPLETE_TODO](state: Array<Todo>, action: Action<number>) {
@@ -17,4 +19,12 @@ export const todoList = createReducer([], {
         // remove all todos with the given id
         return state.filter(t => t.id !== action.payload);
     },
+});
+
+export const settings = createReducer([], {
+    [ActionType.SET_SETTING](state: Array<Setting>, action: Action<Setting>) {
+        window.console.log('settings', state);
+
+        return [...state, action.payload];
+    }
 });
