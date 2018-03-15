@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
+import { Redirect, Route, Switch, RouteComponentProps } from 'react-router';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
@@ -82,6 +82,22 @@ export namespace App {
         selectOptions: Array<any>;
     }
 }
+
+type Configuration = {
+    data: {
+        admin?: object,
+        global?: {
+            http?: {
+                host: string,
+                port: number,
+            },
+            websocket?: {
+                host: string,
+                port: number,
+            },
+        },
+    },
+};
 const history = createHashHistory();
 const drawerWidth = 260;
 const styles = (theme: Theme): StyleRules => ({
