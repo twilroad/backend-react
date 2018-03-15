@@ -67,6 +67,21 @@ type State = {
     selectedOption: object,
     selectOptions: Array<any>,
 };
+type Configuration = {
+    data: {
+        admin?: object,
+        global?: {
+            http?: {
+                host: string,
+                port: number,
+            },
+            websocket?: {
+                host: string,
+                port: number,
+            },
+        },
+    },
+};
 const drawerWidth = 260;
 const styles = (theme: Theme): StyleRules => ({
     drawerDocked: {
@@ -525,8 +540,10 @@ class App extends React.Component<Props, State> {
         createHashHistory().push(selectedOption.url);
     };
     componentDidMount() {
-        axios.get('./config.json').then((response: any) => {
-            window.console.log(response);
+        axios.get('./config.json').then((response: Configuration) => {
+            if (response.data && response.data.global && response.data.global.http) {
+                window.console.log(response.data.global.http);
+            }
         });
     }
     render() {
