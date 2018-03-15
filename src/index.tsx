@@ -1,9 +1,13 @@
 import * as React from 'react';
-import { render } from 'react-dom';
-import App from './layouts/App';
+import * as ReactDOM from 'react-dom';
+import ReduxRoot from './ReduxRoot';
 import './assets/css/main.css';
 
-render(
-    <App/>,
-    document.querySelector('#root')
+const rootEl = document.getElementById('root');
+ReactDOM.render(<ReduxRoot />, rootEl);
+
+const NextApp = require('./ReduxRoot').default;
+ReactDOM.render(
+    <NextApp />,
+    rootEl
 );
