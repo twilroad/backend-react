@@ -115,9 +115,9 @@ class MessageSettled extends React.Component<WithStyles<keyof typeof styles>, St
             `,
         }).then(response => {
             if (!response.data.errors) {
-                const res = response.data.data.getArticlesLimit;
+                const res = response.data.data.getAllBlocks;
                 this.setState({
-                    list: res.articles,
+                    list: res.blocks,
                     totalItems: res.pagination.totalItems,
                     rowsPerPage: res.pagination.pageSize,
                     currentPage: res.pagination.currentPage - 1,
