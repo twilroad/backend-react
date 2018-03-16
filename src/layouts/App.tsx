@@ -59,6 +59,7 @@ import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {
+        todoList: Todo[];
         history: History;
         open: boolean;
         width: string;
@@ -886,6 +887,8 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
                                                 <Route exact path="/settled" component={MessageSettled}/>
                                                 <Route exact path="/rent" component={MessageRent}/>
                                                 <Route exact path="/visit" component={MessageVisit}/>
+                                                <Route exact={true} path="/homepage" component={HomePage} />
+                                                <Route exact={true} path="/todo" component={TodoPage} />
                                                 <Route path="/" render={() => (<Redirect to="/home"/>)}/>
                                             </Switch>
                                         </div>
@@ -899,5 +902,9 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
         );
     }
 }
-
-export default compose(withStyles(styles), withWidth())(App);
+function mapStateToProps(state: RootState) {
+    return {
+        todoList: state.todoList
+    };
+}
+export default compose(withStyles(styles), withWidth())(connect(mapStateToProps)(App));
