@@ -1,7 +1,9 @@
 {
     "global":{
         "http":{
-            "host": "https://notadd.com"
+            "host": "notadd.com",
+            "port": 3000,
+            "schema": "http"
         },
         "websocket":{
             "host": "ws://notadd.com:3000"

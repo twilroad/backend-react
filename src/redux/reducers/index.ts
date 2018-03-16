@@ -3,6 +3,7 @@ import { Setting } from '../model';
 import * as SettingReducder from './setting';
 
 export interface RootState {
+    hosts: string;
     settings: Array<Setting>;
 }
 

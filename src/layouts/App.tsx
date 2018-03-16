@@ -56,10 +56,13 @@ import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
 import 'react-select/dist/react-select.css';
 import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
+import { connect } from 'react-redux';
+import { RootState } from '../redux/reducers';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {
         history: History;
+        hosts: string;
         open: boolean;
         width: string;
     }
@@ -81,8 +84,9 @@ type Configuration = {
         admin?: object,
         global?: {
             http?: {
-                host: string,
-                port: number,
+                schema?: string,
+                host?: string,
+                port?: number,
             },
             websocket?: {
                 host: string,
@@ -545,9 +549,22 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
     };
     componentDidMount() {
         axios.get('./config.json').then((response: Configuration) => {
+            let host = 'localhost';
+            let port = 3000;
+            let schema = 'http';
             if (response.data && response.data.global && response.data.global.http) {
-                window.console.log(response.data.global.http);
+                const http = response.data.global.http;
+                if (http.host) {
+                    host = http.host;
+                }
+                if (http.port) {
+                    port = http.port;
+                }
+                if (http.schema) {
+                    schema = http.schema;
+                }
             }
+            window.console.log(`${schema}://${host}:${port}/`);
         });
     }
     render() {
@@ -899,4 +916,9 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
         );
     }
 }
-export default compose(withStyles(styles), withWidth())(App);
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+export default compose(withStyles(styles), withWidth())(connect(mapStateToProps)(App));
