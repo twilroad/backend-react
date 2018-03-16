@@ -1,12 +1,11 @@
-
 import { combineReducers } from 'redux';
-import * as todoReducder from './todo';
-import { Todo } from '../../model/model';
+import { Setting } from '../model';
+import * as SettingReducder from './setting';
 
 export interface RootState {
-  todoList: Array<Todo>;
+    settings: Array<Setting>;
 }
 
 export default combineReducers<RootState>({
-  ...todoReducder
+    ...SettingReducder,
 });

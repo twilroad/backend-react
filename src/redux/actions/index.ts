@@ -1,3 +1,3 @@
-import * as TodoActions from './todo';
+import * as SettingActions from './setting';
 
-export const ActionCreators = Object.assign({}, TodoActions);
+export const ActionCreators = Object.assign({}, SettingActions);
