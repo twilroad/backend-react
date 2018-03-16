@@ -61,7 +61,7 @@ import { connect } from 'react-redux';
 import HomePage from '../pages/HomePage';
 import TodoPage from '../pages/TodoPage';
 import { Todo } from '../model/model';
-import { RootState } from '../reducers/index';
+import { RootState } from '../redux/reducers/index';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {

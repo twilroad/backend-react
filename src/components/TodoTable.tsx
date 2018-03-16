@@ -4,7 +4,7 @@ import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Ta
 import Paper from 'material-ui/Paper';
 import withStyles, { WithStyles, StyleRulesCallback } from 'material-ui/styles/withStyles';
 import Checkbox from 'material-ui/Checkbox/Checkbox';
-import * as TodoActions from '../actions/todo';
+import * as TodoActions from '../redux/actions/todo';
 import IconButton from 'material-ui/IconButton/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 

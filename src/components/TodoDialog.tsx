@@ -4,7 +4,7 @@ import Dialog, {
     DialogActions,
 } from 'material-ui/Dialog';
 import withStyles, { WithStyles, StyleRulesCallback } from 'material-ui/styles/withStyles';
-import * as TodoActions from '../actions/todo';
+import * as TodoActions from '../redux/actions/todo';
 import TextField from 'material-ui/TextField/TextField';
 import Button from 'material-ui/Button/Button';
 
