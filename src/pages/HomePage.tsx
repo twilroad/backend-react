@@ -4,7 +4,7 @@ import withStyles, { WithStyles, StyleRulesCallback } from 'material-ui/styles/w
 import { RootState } from '../redux/reducers';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
-import { Todo } from '../model/model';
+import { Todo } from '../redux/model/model';
 
 export namespace HomePage {
   export interface Props extends RouteComponentProps<void> {

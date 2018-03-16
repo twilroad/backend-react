@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Todo } from '../model/model';
+import { Todo } from '../redux/model/model';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Paper from 'material-ui/Paper';
 import withStyles, { WithStyles, StyleRulesCallback } from 'material-ui/styles/withStyles';

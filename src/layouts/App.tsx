@@ -60,7 +60,7 @@ import { connect } from 'react-redux';
 
 import HomePage from '../pages/HomePage';
 import TodoPage from '../pages/TodoPage';
-import { Todo } from '../model/model';
+import { Todo } from '../redux/model/model';
 import { RootState } from '../redux/reducers/index';
 
 export namespace App {

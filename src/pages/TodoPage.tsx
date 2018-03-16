@@ -7,7 +7,7 @@ import { RootState } from '../redux/reducers/index';
 import * as TodoActions from '../redux/actions/todo';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Todo } from '../model/model';
+import { Todo } from '../redux/model/model';
 import { RouteComponentProps } from 'react-router';
 import Grid from 'material-ui/Grid';
 import TodoDialog from '../components/TodoDialog';
