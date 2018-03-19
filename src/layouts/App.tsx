@@ -1,10 +1,12 @@
+import 'react-select/dist/react-select.css';
 import * as React from 'react';
+import * as classNames from 'classnames';
+import * as SettingActions from '../redux/actions/hosts';
 import { Redirect, Route, Switch, RouteComponentProps } from 'react-router';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
 import { HashRouter } from 'react-router-dom';
-import * as classNames from 'classnames';
+import axios from 'axios';
 import Side from './SideBar';
 import Home from '../pages/Home';
 import Configurations from '../pages/global/Configurations';
@@ -54,13 +56,14 @@ import Select from 'react-select';
 import createHashHistory from 'history/createHashHistory';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
-import 'react-select/dist/react-select.css';
 import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
 import { connect } from 'react-redux';
 import { RootState } from '../redux/reducers';
+import { bindActionCreators } from 'redux';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {
+        actions: typeof SettingActions;
         history: History;
         hosts: string;
         open: boolean;
@@ -549,22 +552,23 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
     };
     componentDidMount() {
         axios.get('./config.json').then((response: Configuration) => {
-            let host = 'localhost';
-            let port = 3000;
-            let schema = 'http';
+            let host = window.location.hostname;
+            let port = window.location.port;
+            let schema = window.location.protocol.replace(':', '');
             if (response.data && response.data.global && response.data.global.http) {
                 const http = response.data.global.http;
                 if (http.host) {
                     host = http.host;
                 }
                 if (http.port) {
-                    port = http.port;
+                    port = http.port.toString();
                 }
                 if (http.schema) {
                     schema = http.schema;
                 }
             }
             window.console.log(`${schema}://${host}:${port}/`);
+            this.props.actions.setHosts(`${schema}://${host}:${port}/`);
         });
     }
     render() {
@@ -916,9 +920,16 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
         );
     }
 }
+
+function mapDispatchToProps(dispatch: any) {
+    return {
+        actions: bindActionCreators(SettingActions as any, dispatch)
+    };
+}
+
 function mapStateToProps(state: RootState) {
     return {
         hosts: state.hosts,
     };
 }
-export default compose(withStyles(styles), withWidth())(connect(mapStateToProps)(App));
+export default compose(withStyles(styles), withWidth())(connect(mapStateToProps, mapDispatchToProps)(App));
