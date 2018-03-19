@@ -983,7 +983,6 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                                         options={this.state.types}
                                         onChange={this.handleChangeType}
                                         notFoundContent="Not Found"
-                                        placeholder=""
                                     />
                                 </FormControl>
                                 <FormControl
