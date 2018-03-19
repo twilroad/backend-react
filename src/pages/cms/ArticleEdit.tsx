@@ -344,9 +344,12 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
             pageId = 0;
         }
         const str = self.state.editor.content.replace(/"/g, '\\"');
+        const abs = self.state.abstract.replace(/"/g, '\\"');
         const pictureStr = self.state.imgUrl.replace(/"/g, '\\"');
         const str1 = str.replace(/“/g, '\\"');
         const str2 = str1.replace(/”/g, '\\"');
+        const abs1 = abs.replace(/“/g, '\\"');
+        const abs2 = abs1.replace(/”/g, '\\"');
         if (self.state.pageType === '1') {
             axios.post('http://192.168.1.121:3000/graphql?', {
                 query: `
@@ -355,7 +358,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                             name: "${self.state.name}",
                             classify: "${self.state.classify}",
                             classifyId: ${self.state.classifyId},
-                            abstract: "${self.state.abstract}",
+                            abstract: "${abs2}",
                             content: "${str2}",
                             topPlace: ${self.state.topPlace},
                             hidden: ${self.state.hidden},
