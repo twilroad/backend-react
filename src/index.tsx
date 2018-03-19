@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { render } from 'react-dom';
-import App from './layouts/App';
 import './assets/css/main.css';
+import * as React from 'react';
+import * as ReactDOM from 'react-dom';
+import ReduxRoot from './redux/ReduxRoot';
 
-render(
-    <App/>,
-    document.querySelector('#root')
+ReactDOM.render(
+    <ReduxRoot />,
+    document.getElementById('root'),
 );

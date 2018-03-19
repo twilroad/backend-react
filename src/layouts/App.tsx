@@ -1,10 +1,12 @@
+import 'react-select/dist/react-select.css';
 import * as React from 'react';
-import { Redirect, Route, Switch } from 'react-router';
-import axios from 'axios';
+import * as classNames from 'classnames';
+import * as SettingActions from '../redux/actions/hosts';
+import { Redirect, Route, Switch, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
 import { HashRouter } from 'react-router-dom';
-import * as classNames from 'classnames';
+import axios from 'axios';
 import Side from './SideBar';
 import Home from '../pages/Home';
 import Configurations from '../pages/global/Configurations';
@@ -54,19 +56,49 @@ import Select from 'react-select';
 import createHashHistory from 'history/createHashHistory';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
-import 'react-select/dist/react-select.css';
 import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
+import { connect } from 'react-redux';
+import { RootState } from '../redux/reducers';
+import { bindActionCreators } from 'redux';
 
-type State = {
-    current: number,
-    fullScreen: boolean,
-    open: boolean,
-    navs: Array<any>,
-    user: object,
-    openSearch: boolean,
-    selectedOption: object,
-    selectOptions: Array<any>,
+export namespace App {
+    export interface Props extends RouteComponentProps<void> {
+        actions: typeof SettingActions;
+        history: History;
+        hosts: string;
+        open: boolean;
+        width: string;
+    }
+
+    export interface State {
+        current: number;
+        fullScreen: boolean;
+        open: boolean;
+        navs: Array<any>;
+        user: object;
+        openSearch: boolean;
+        selectedOption: object;
+        selectOptions: Array<any>;
+    }
+}
+
+type Configuration = {
+    data: {
+        admin?: object,
+        global?: {
+            http?: {
+                schema?: string,
+                host?: string,
+                port?: number,
+            },
+            websocket?: {
+                host: string,
+                port: number,
+            },
+        },
+    },
 };
+const history = createHashHistory();
 const drawerWidth = 260;
 const styles = (theme: Theme): StyleRules => ({
     drawerDocked: {
@@ -182,13 +214,7 @@ const styles = (theme: Theme): StyleRules => ({
 
 const stylesType = {} as StyleRules;
 
-interface Props extends WithStyles<keyof typeof stylesType> {
-    history: History;
-    open: boolean;
-    width: string;
-}
-
-class App extends React.Component<Props, State> {
+class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Props, App.State> {
     state = {
         open: true,
         current: 0,
@@ -522,11 +548,27 @@ class App extends React.Component<Props, State> {
     };
     handleChangeSelect = (selectedOption: any) => {
         this.setState({ selectedOption });
-        createHashHistory().push(selectedOption.url);
+        history.push(selectedOption.url);
     };
     componentDidMount() {
-        axios.get('./config.json').then((response: any) => {
-            window.console.log(response);
+        axios.get('./config.json').then((response: Configuration) => {
+            let host = window.location.hostname;
+            let port = window.location.port;
+            let schema = window.location.protocol.replace(':', '');
+            if (response.data && response.data.global && response.data.global.http) {
+                const http = response.data.global.http;
+                if (http.host) {
+                    host = http.host;
+                }
+                if (http.port) {
+                    port = http.port.toString();
+                }
+                if (http.schema) {
+                    schema = http.schema;
+                }
+            }
+            window.console.log(`${schema}://${host}:${port}/`);
+            this.props.actions.setHosts(`${schema}://${host}:${port}/`);
         });
     }
     render() {
@@ -878,4 +920,16 @@ class App extends React.Component<Props, State> {
         );
     }
 }
-export default compose(withStyles(styles), withWidth())(App);
+
+function mapDispatchToProps(dispatch: any) {
+    return {
+        actions: bindActionCreators(SettingActions as any, dispatch)
+    };
+}
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+export default compose(withStyles(styles), withWidth())(connect(mapStateToProps, mapDispatchToProps)(App));
