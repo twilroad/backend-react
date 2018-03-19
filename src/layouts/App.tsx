@@ -1,7 +1,7 @@
 import 'react-select/dist/react-select.css';
 import * as React from 'react';
 import * as classNames from 'classnames';
-import * as SettingActions from '../redux/actions/hosts';
+import * as HostsActions from '../redux/actions/hosts';
 import { Redirect, Route, Switch, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
@@ -63,7 +63,7 @@ import { bindActionCreators } from 'redux';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {
-        actions: typeof SettingActions;
+        actions: typeof HostsActions;
         history: History;
         hosts: string;
         open: boolean;
@@ -923,7 +923,7 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
 
 function mapDispatchToProps(dispatch: any) {
     return {
-        actions: bindActionCreators(SettingActions as any, dispatch)
+        actions: bindActionCreators(HostsActions as any, dispatch)
     };
 }
 
@@ -932,4 +932,5 @@ function mapStateToProps(state: RootState) {
         hosts: state.hosts,
     };
 }
+
 export default compose(withStyles(styles), withWidth())(connect(mapStateToProps, mapDispatchToProps)(App));

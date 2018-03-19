@@ -1,6 +1,7 @@
+import * as HostsReducder from './hosts';
+import * as SettingReducder from './setting';
 import { combineReducers } from 'redux';
 import { Setting } from '../model';
-import * as SettingReducder from './setting';
 
 export interface RootState {
     hosts: string;
@@ -8,5 +9,6 @@ export interface RootState {
 }
 
 export default combineReducers<RootState>({
+    ...HostsReducder,
     ...SettingReducder,
 });
