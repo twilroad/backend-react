@@ -411,7 +411,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                              content: "${str2}",
                              classify: "${self.state.classify}",
                              classifyId: ${self.state.classifyId},
-                             abstract: "${self.state.abstract}",
+                             abstract: "${abs2}",
                              topPlace: ${self.state.topPlace},
                              hidden: ${self.state.hidden},
                              publishedTime: "${self.state.publishedTime}",
