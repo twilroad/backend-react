@@ -9,6 +9,8 @@ import Button from 'material-ui/Button';
 import Checkbox from 'material-ui/Checkbox';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
 
 const styles = {
     root: {
@@ -63,7 +65,11 @@ type State = {
     error: boolean
 };
 
-class Upload extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    hosts: string;
+}
+
+class Upload extends React.Component<Props, State> {
     state = {
         GDisOPen: false,
         appendageSize: 1024,
@@ -82,44 +88,44 @@ class Upload extends React.Component<WithStyles<keyof typeof styles>, State> {
         error: false,
     };
     componentDidMount() {
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     GDisOPen: getSettingByKey(key: "global.GDisOPen") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     appendageSize: getSettingByKey(key: "global.appendageSize") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     imgSize: getSettingByKey(key: "global.imgSize") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },  
                     videoSize: getSettingByKey(key: "global.videoSize") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     extensionNames: getSettingByKey(key: "global.extensionNames") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     fileNames: getSettingByKey(key: "global.fileNames") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     videoNames: getSettingByKey(key: "global.videoNames") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     managementDocumentsNames: getSettingByKey(key: "global.managementDocumentsNames") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     managementImagesNames: getSettingByKey(key: "global.managementImagesNames") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                 }
             `,
@@ -182,46 +188,46 @@ class Upload extends React.Component<WithStyles<keyof typeof styles>, State> {
                     loading: true,
                 },
             );
-            axios.post('http://localhost:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 mutation {
                     GDisOPen: setSetting(key: "global.GDisOPen", value: "${this.state.GDisOPen ? 1 : 0}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     appendageSize: setSetting(key: "global.appendageSize", value: "${this.state.appendageSize}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     imgSize: setSetting(key: "global.imgSize", value: "${this.state.imgSize}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },  
                     videoSize: setSetting(key: "global.videoSize", value: "${this.state.videoSize}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     extensionNames: setSetting(key: "global.extensionNames", value: "${this.state.extensionNames}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     fileNames: setSetting(key: "global.fileNames", value: "${this.state.fileNames}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     videoNames: setSetting(key: "global.videoNames", value: "${this.state.videoNames}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     managementDocumentsNames: setSetting(key: "global.managementDocumentsNames", 
                     value: "${this.state.managementDocumentsNames}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                     managementImagesNames: setSetting(key: "global.managementImagesNames",
                      value: "${this.state.managementImagesNames}") {
-                    key,
-                    value,
+                        key,
+                        value,
                     },
                 }
             `,
@@ -494,4 +500,11 @@ class Upload extends React.Component<WithStyles<keyof typeof styles>, State> {
         );
     }
 }
-export default withStyles(styles)(Upload);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default withStyles(styles)(connect(mapStateToProps)(Upload));
