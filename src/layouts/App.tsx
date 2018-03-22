@@ -41,6 +41,8 @@ import MessageSettled from '../pages/cms/MessageSettled';
 import MessageRent from '../pages/cms/MessageRent';
 import MessageVisit from '../pages/cms/MessageVisit';
 
+import UserManager from '../pages/user/UserManager';
+
 import Drawer from 'material-ui/Drawer';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 import Setting from 'material-ui-icons/Settings';
@@ -447,7 +449,40 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
             {
                 name: '用户中心',
                 path: '/user',
-                side: [],
+                side: [
+                    {
+                        name: '用户管理',
+                        open: false,
+                        index: 0,
+                        icon: 'reorder',
+                        children: [
+                            {
+                                'name': '用户管理',
+                                'path': '/user/manager',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '信息管理',
+                                'path': '/user/message',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '信息分组',
+                                'path': '/user/group',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '回收站',
+                                'path': '/user/recycle',
+                                'open': false,
+                                'children': [],
+                            },
+                        ]
+                    },
+                ],
             },
             {
                 name: '微信',
@@ -907,6 +942,7 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
                                                 <Route exact path="/settled" component={MessageSettled}/>
                                                 <Route exact path="/rent" component={MessageRent}/>
                                                 <Route exact path="/visit" component={MessageVisit}/>
+                                                <Route exact path="/user/manager" component={UserManager}/>
                                                 <Route path="/" render={() => (<Redirect to="/home"/>)}/>
                                             </Switch>
                                         </div>
