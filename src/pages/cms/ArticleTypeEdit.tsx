@@ -972,4 +972,3 @@ function mapStateToProps(state: RootState) {
 }
 
 export default compose(withStyles(styles))(connect(mapStateToProps)(ArticleTypeEdit));
-
