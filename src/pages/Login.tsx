@@ -12,6 +12,8 @@ import { History } from 'history';
 import Snackbar from 'material-ui/Snackbar';
 // import Slide from 'material-ui/transitions/Slide';
 import axios from 'axios';
+import { RootState } from '../redux/reducers';
+import { connect } from 'react-redux';
 
 const styles = {
     card: {
@@ -33,6 +35,7 @@ type State = {
 
 interface Props extends WithStyles<keyof typeof styles> {
     history: History;
+    hosts: string;
 }
 
 class Login extends React.Component<Props, State> {
@@ -60,7 +63,7 @@ class Login extends React.Component<Props, State> {
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     tokens: getAuthToken(auth: {
@@ -180,4 +183,11 @@ class Login extends React.Component<Props, State> {
         );
     }
 }
-export default withStyles(styles)(Login);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default withStyles(styles)(connect(mapStateToProps)(Login));

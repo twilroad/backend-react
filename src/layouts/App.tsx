@@ -592,7 +592,7 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
             let schema = window.location.protocol.replace(':', '');
             if (response.data && response.data.global && response.data.global.http) {
                 const http = response.data.global.http;
-                if (http.host) {
+                if (http.host && http.host !== '*') {
                     host = http.host;
                 }
                 if (http.port) {
