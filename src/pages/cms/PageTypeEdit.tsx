@@ -12,6 +12,9 @@ import { CircularProgress } from 'material-ui/Progress';
 import Snackbar from 'material-ui/Snackbar';
 import Cascader from 'antd/lib/cascader';
 import 'antd/lib/cascader/style/css.js';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     root: {
@@ -67,7 +70,12 @@ type State = {
     types: Array<any>,
 };
 
-class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class PageTypeEdit extends React.Component<Props, State> {
     constructor (props: any, state: any) {
         super(props, state);
         let type = '';
@@ -98,7 +106,7 @@ class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, Stat
     }
     componentDidMount() {
         if (this.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getClassifyById(getClassifyById: {
@@ -133,7 +141,7 @@ class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, Stat
             });
         }
 
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getClassifys(getAllClassify: {
@@ -255,7 +263,7 @@ class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, Stat
             pageId = 0;
         }
         if (this.state.title && this.state.classifyAlias && this.state.pageType === '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                         ClassifyCU(createClass: {
@@ -298,7 +306,7 @@ class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, Stat
                 }
             });
         } else if (this.state.title && this.state.classifyAlias && this.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                         ClassifyCU(updateClass: {
@@ -545,4 +553,11 @@ class PageTypeEdit extends React.Component<WithStyles<keyof typeof styles>, Stat
         );
     }
 }
-export default withStyles(styles)(PageTypeEdit);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(PageTypeEdit));

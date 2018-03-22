@@ -20,6 +20,9 @@ import Dialog, {
     DialogContent,
     DialogTitle,
 } from 'material-ui/Dialog';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     evenRow: {
@@ -57,7 +60,12 @@ type State = {
     errorMessage: string,
 };
 
-class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class AddonOpen extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -79,7 +87,7 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
         if (!checked) {
             api = 'disableAddon';
         }
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     api: ${api}(identification: "${pro.identification}") {
@@ -115,7 +123,7 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     uninstallAddon(identification: "${name}") {
@@ -182,7 +190,7 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
     };
     componentDidMount() {
         const self = this;
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getAddons(filters: {installed: true}) {
@@ -333,4 +341,11 @@ class AddonOpen extends React.Component<WithStyles<keyof typeof styles>, State> 
         );
     }
 }
-export default withStyles(styles)(AddonOpen);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(AddonOpen));

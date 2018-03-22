@@ -1,10 +1,12 @@
+import 'react-select/dist/react-select.css';
 import * as React from 'react';
+import * as classNames from 'classnames';
+import * as HostsActions from '../redux/actions/hosts';
 import { Redirect, Route, Switch, RouteComponentProps } from 'react-router';
-import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { History } from 'history';
 import { HashRouter } from 'react-router-dom';
-import * as classNames from 'classnames';
+import axios from 'axios';
 import Side from './SideBar';
 import Home from '../pages/Home';
 import Configurations from '../pages/global/Configurations';
@@ -39,6 +41,8 @@ import MessageSettled from '../pages/cms/MessageSettled';
 import MessageRent from '../pages/cms/MessageRent';
 import MessageVisit from '../pages/cms/MessageVisit';
 
+import UserManager from '../pages/user/UserManager';
+
 import Drawer from 'material-ui/Drawer';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
 import Setting from 'material-ui-icons/Settings';
@@ -54,19 +58,16 @@ import Select from 'react-select';
 import createHashHistory from 'history/createHashHistory';
 import withWidth from 'material-ui/utils/withWidth';
 import compose from 'recompose/compose';
-import 'react-select/dist/react-select.css';
 import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
 import { connect } from 'react-redux';
-
-import HomePage from '../pages/HomePage';
-import TodoPage from '../pages/TodoPage';
-import { Todo } from '../model/model';
-import { RootState } from '../reducers/index';
+import { RootState } from '../redux/reducers';
+import { bindActionCreators } from 'redux';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {
-        todoList: Todo[];
+        actions: typeof HostsActions;
         history: History;
+        hosts: string;
         open: boolean;
         width: string;
     }
@@ -88,8 +89,9 @@ type Configuration = {
         admin?: object,
         global?: {
             http?: {
-                host: string,
-                port: number,
+                schema?: string,
+                host?: string,
+                port?: number,
             },
             websocket?: {
                 host: string,
@@ -447,7 +449,40 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
             {
                 name: '用户中心',
                 path: '/user',
-                side: [],
+                side: [
+                    {
+                        name: '用户管理',
+                        open: false,
+                        index: 0,
+                        icon: 'reorder',
+                        children: [
+                            {
+                                'name': '用户管理',
+                                'path': '/user/manager',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '信息管理',
+                                'path': '/user/message',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '信息分组',
+                                'path': '/user/group',
+                                'open': false,
+                                'children': [],
+                            },
+                            {
+                                'name': '回收站',
+                                'path': '/user/recycle',
+                                'open': false,
+                                'children': [],
+                            },
+                        ]
+                    },
+                ],
             },
             {
                 name: '微信',
@@ -552,9 +587,23 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
     };
     componentDidMount() {
         axios.get('./config.json').then((response: Configuration) => {
+            let host = window.location.hostname;
+            let port = window.location.port;
+            let schema = window.location.protocol.replace(':', '');
             if (response.data && response.data.global && response.data.global.http) {
-                window.console.log(response.data.global.http);
+                const http = response.data.global.http;
+                if (http.host && http.host !== '*') {
+                    host = http.host;
+                }
+                if (http.port) {
+                    port = http.port.toString();
+                }
+                if (http.schema) {
+                    schema = http.schema;
+                }
             }
+            window.console.log(`${schema}://${host}:${port}/`);
+            this.props.actions.setHosts(`${schema}://${host}:${port}/`);
         });
     }
     render() {
@@ -893,8 +942,7 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
                                                 <Route exact path="/settled" component={MessageSettled}/>
                                                 <Route exact path="/rent" component={MessageRent}/>
                                                 <Route exact path="/visit" component={MessageVisit}/>
-                                                <Route exact={true} path="/homepage" component={HomePage} />
-                                                <Route exact={true} path="/todo" component={TodoPage} />
+                                                <Route exact path="/user/manager" component={UserManager}/>
                                                 <Route path="/" render={() => (<Redirect to="/home"/>)}/>
                                             </Switch>
                                         </div>
@@ -908,9 +956,17 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
         );
     }
 }
-function mapStateToProps(state: RootState) {
+
+function mapDispatchToProps(dispatch: any) {
     return {
-        todoList: state.todoList
+        actions: bindActionCreators(HostsActions as any, dispatch)
     };
 }
-export default compose(withStyles(styles), withWidth())(connect(mapStateToProps)(App));
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles), withWidth())(connect(mapStateToProps, mapDispatchToProps)(App));

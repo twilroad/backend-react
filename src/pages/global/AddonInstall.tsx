@@ -21,6 +21,9 @@ import Dialog, {
     DialogContent,
     DialogTitle,
 } from 'material-ui/Dialog';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     evenRow: {
@@ -67,7 +70,12 @@ type State = {
     errorMessage: string,
 };
 
-class AddonInstall extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class AddonInstall extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -92,7 +100,7 @@ class AddonInstall extends React.Component<WithStyles<keyof typeof styles>, Stat
     };
     componentDidMount() {
         const self = this;
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getAddons(filters: {}) {
@@ -125,7 +133,7 @@ class AddonInstall extends React.Component<WithStyles<keyof typeof styles>, Stat
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     installAddon(identification: "${name}") {
@@ -162,7 +170,7 @@ class AddonInstall extends React.Component<WithStyles<keyof typeof styles>, Stat
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     uninstallAddon(identification: "${name}") {
@@ -363,4 +371,11 @@ class AddonInstall extends React.Component<WithStyles<keyof typeof styles>, Stat
         );
     }
 }
-export default withStyles(styles)(AddonInstall);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(AddonInstall));

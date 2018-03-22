@@ -6,6 +6,9 @@ import ExpandMore from 'material-ui-icons/ExpandMore';
 import KeyboardArrowRight from 'material-ui-icons/KeyboardArrowRight';
 import Collapse from 'material-ui/transitions/Collapse';
 import axios from 'axios';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     evenRow: {
@@ -23,7 +26,12 @@ type State = {
     list: Array<any>,
 };
 
-class MessageSettled extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class MessageSettled extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -34,7 +42,7 @@ class MessageSettled extends React.Component<WithStyles<keyof typeof styles>, St
         };
     }
     componentDidMount() {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getAllBlocks(
@@ -80,7 +88,7 @@ class MessageSettled extends React.Component<WithStyles<keyof typeof styles>, St
         });
     }
     handlePageClick = (data: any) => {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getAllBlocks(
@@ -213,4 +221,11 @@ class MessageSettled extends React.Component<WithStyles<keyof typeof styles>, St
         );
     }
 }
-export default withStyles(styles)(MessageSettled);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(MessageSettled));

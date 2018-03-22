@@ -18,6 +18,9 @@ import Dialog, {
     DialogTitle,
 } from 'material-ui/Dialog';
 import axios from 'axios';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     root: {
@@ -51,7 +54,12 @@ type State = {
     error: boolean,
 };
 
-class PageType extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class PageType extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
 
@@ -71,7 +79,7 @@ class PageType extends React.Component<WithStyles<keyof typeof styles>, State> {
         };
     }
     componentDidMount() {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getClassifys(getAllClassify: {
@@ -128,7 +136,7 @@ class PageType extends React.Component<WithStyles<keyof typeof styles>, State> {
                 openTip: true,
             });
         } else {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                         ClassifyCU(deleteClassifyById: {
@@ -309,4 +317,11 @@ class PageType extends React.Component<WithStyles<keyof typeof styles>, State> {
         );
     }
 }
-export default withStyles(styles)(PageType);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(PageType));

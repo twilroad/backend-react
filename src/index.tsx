@@ -1,13 +1,9 @@
+import './assets/css/main.css';
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import ReduxRoot from './ReduxRoot';
-import './assets/css/main.css';
+import ReduxRoot from './redux/ReduxRoot';
 
-const rootEl = document.getElementById('root');
-ReactDOM.render(<ReduxRoot />, rootEl);
-
-const NextApp = require('./ReduxRoot').default;
 ReactDOM.render(
-    <NextApp />,
-    rootEl
+    <ReduxRoot />,
+    document.getElementById('root'),
 );

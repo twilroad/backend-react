@@ -8,6 +8,9 @@ import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 
 const styles = {
     root: {
@@ -33,7 +36,11 @@ type State = {
     error: boolean,
 };
 
-class Seo extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    hosts: string;
+}
+
+class Seo extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -54,7 +61,7 @@ class Seo extends React.Component<WithStyles<keyof typeof styles>, State> {
         });
     };
     componentDidMount() {
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     title: getSettingByKey(key: "global.title") {
@@ -95,7 +102,7 @@ class Seo extends React.Component<WithStyles<keyof typeof styles>, State> {
             },
         );
         if (this.state.title && this.state.describe && this.state.keywords) {
-            axios.post('http://localhost:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 mutation {
                     webName: setSetting(key: "global.title", value: "${this.state.title}") {
@@ -259,4 +266,10 @@ class Seo extends React.Component<WithStyles<keyof typeof styles>, State> {
         );
     }
 }
-export default withStyles(styles)(Seo);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+export default compose(withStyles(styles))(connect(mapStateToProps)(Seo));

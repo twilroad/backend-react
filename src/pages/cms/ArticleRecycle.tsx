@@ -22,6 +22,9 @@ import Dialog, {
     DialogTitle,
 } from 'material-ui/Dialog';
 import axios from 'axios';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     evenRow: {
@@ -85,7 +88,12 @@ type State = {
     selection: Array<any>,
 };
 
-class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class ArticleRecycle extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -107,7 +115,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
         };
     }
     componentDidMount() {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getArticlesLimit(recycleFind: {
@@ -148,7 +156,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
         });
     }
     refreshPage = () => {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getArticlesLimit(recycleFind: {
@@ -310,7 +318,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
         } else {
             ids = this.state.selection;
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     ArticleCU(recycleDelete:{
@@ -343,7 +351,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
         } else {
             ids = this.state.selection;
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     ArticleCU(reductionArticle:{
@@ -373,7 +381,7 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
         this.setState({ openMessageTip: false });
     };
     handlePageClick = (data: any) => {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getArticlesLimit(recycleFind: {
@@ -611,4 +619,11 @@ class ArticleRecycle extends React.Component<WithStyles<keyof typeof styles>, St
         );
     }
 }
-export default withStyles(styles)(ArticleRecycle);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(ArticleRecycle));

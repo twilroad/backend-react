@@ -33,6 +33,9 @@ import Dialog, {
 } from 'material-ui/Dialog';
 import * as classNames from 'classnames';
 import axios from 'axios';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     evenRow: {
@@ -127,7 +130,11 @@ type State = {
     pageStatus: boolean,
 };
 
-class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    hosts: string;
+}
+
+class Article extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -228,7 +235,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
         };
     }
     componentDidMount() {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getArticlesLimit(getArticleAll: {
@@ -267,7 +274,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                 });
             }
         });
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getClassifys(getAllClassify: {
@@ -352,7 +359,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
         });
     }
     refreshPage = () => {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getArticlesLimit(getArticleAll: {
@@ -472,7 +479,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
         } else {
             ids = this.state.selection;
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     ArticleCU(deleteById:{
@@ -536,7 +543,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
             param = true;
         }
         if (this.state.isTop === '0') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getArticlesLimit(serachArticle: {
@@ -580,7 +587,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                 }
             });
         } else {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getArticlesLimit(serachArticle: {
@@ -634,7 +641,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
             param = true;
         }
         if (this.state.pageStatus && this.state.isTop === '0') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getArticlesLimit(serachArticle: {
@@ -677,7 +684,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                 }
             });
         } else if (this.state.pageStatus && this.state.isTop !== '0') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getArticlesLimit(serachArticle: {
@@ -721,7 +728,7 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                 }
             });
         } else {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getArticlesLimit(getArticleAll: {
@@ -983,7 +990,6 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
                                         options={this.state.types}
                                         onChange={this.handleChangeType}
                                         notFoundContent="Not Found"
-                                        placeholder=""
                                     />
                                 </FormControl>
                                 <FormControl
@@ -1058,4 +1064,11 @@ class Article extends React.Component<WithStyles<keyof typeof styles>, State> {
         );
     }
 }
-export default withStyles(styles)(Article);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(Article));
