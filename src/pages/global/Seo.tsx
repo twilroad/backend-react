@@ -10,6 +10,7 @@ import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
 import { RootState } from '../../redux/reducers';
 import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 
 const styles = {
     root: {
@@ -271,5 +272,4 @@ function mapStateToProps(state: RootState) {
         hosts: state.hosts,
     };
 }
-
-export default withStyles(styles)(connect(mapStateToProps)(Seo));
+export default compose(withStyles(styles))(connect(mapStateToProps)(Seo));
