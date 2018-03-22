@@ -345,17 +345,20 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         }
         const str = self.state.editor.content.replace(/"/g, '\\"');
         const abs = self.state.abstract.replace(/"/g, '\\"');
+        const name = self.state.name.replace(/"/g, '\\"');
         const pictureStr = self.state.imgUrl.replace(/"/g, '\\"');
         const str1 = str.replace(/“/g, '\\"');
         const str2 = str1.replace(/”/g, '\\"');
         const abs1 = abs.replace(/“/g, '\\"');
         const abs2 = abs1.replace(/”/g, '\\"');
+        const name1 = name.replace(/“/g, '\\"');
+        const name2 = name1.replace(/”/g, '\\"');
         if (self.state.pageType === '1') {
             axios.post('http://192.168.1.121:3000/graphql?', {
                 query: `
                     mutation {
                         ArticleCU(createArt: {
-                            name: "${self.state.name}",
+                            name: "${name2}",
                             classify: "${self.state.classify}",
                             classifyId: ${self.state.classifyId},
                             abstract: "${abs2}",
@@ -407,11 +410,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                     mutation {
                          ArticleCU(updateArt: {
                              id: ${pageId},
-                             name: "${self.state.name}",
+                             name: "${name2}",
                              content: "${str2}",
                              classify: "${self.state.classify}",
                              classifyId: ${self.state.classifyId},
-                             abstract: "${self.state.abstract}",
+                             abstract: "${abs2}",
                              topPlace: ${self.state.topPlace},
                              hidden: ${self.state.hidden},
                              publishedTime: "${self.state.publishedTime}",
@@ -698,10 +701,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                         className="data-picker"
                                         style={{marginBottom: '32px'}}
                                         autoOk
-                                        ampm={false}
                                         showTabs={false}
                                         autoSubmit={false}
-                                        format="YYYY MMMM Do hh:mm"
+                                        format="YYYY/MM/DD hh:mm A"
+                                        mask={[/\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, ' ',
+                                            /\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M']}
                                         label="发布时间"
                                         value={this.state.publishedTime}
                                         onChange={this.handleDateChange}
@@ -715,9 +719,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                                 className="data-picker"
                                                 style={{marginBottom: '32px'}}
                                                 autoOk
-                                                ampm={false}
                                                 showTabs={false}
                                                 autoSubmit={false}
+                                                format="YYYY/MM/DD hh:mm A"
+                                                mask={[/\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, ' ',
+                                                    /\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M']}
                                                 label="开始时间"
                                                 value={this.state.startTime}
                                                 onChange={this.handleStartDateChange}
@@ -728,9 +734,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                                 className="data-picker"
                                                 style={{marginBottom: '32px'}}
                                                 autoOk
-                                                ampm={false}
                                                 showTabs={false}
                                                 autoSubmit={false}
+                                                format="YYYY/MM/DD hh:mm A"
+                                                mask={[/\d/, /\d/, /\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, ' ',
+                                                    /\d/, /\d/, ':', /\d/, /\d/, ' ', /a|p/i, 'M']}
                                                 label="结束时间"
                                                 value={this.state.endTime}
                                                 onChange={this.handleEndDateChange}
@@ -779,7 +787,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                                             <InputLabel
                                                 className={this.props.classes.formLabelFont}
                                             >
-                                                活动人数
+                                                活动限额人数
                                             </InputLabel>
                                             <Input
                                                 className={this.props.classes.formLabelFont}
