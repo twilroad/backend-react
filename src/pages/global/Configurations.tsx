@@ -9,6 +9,9 @@ import axios from 'axios';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
 import withStyles, { WithStyles } from 'material-ui/styles/withStyles';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     root: {
@@ -72,7 +75,11 @@ type State = {
     errorMessage: string,
 };
 
-class Configurations extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    hosts: string;
+}
+
+class Configurations extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -91,7 +98,7 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
         };
     }
     componentDidMount() {
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     webName: getSettingByKey(key: "global.webName") {
@@ -160,42 +167,42 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
                     loading: true,
                 },
             );
-            axios.post('http://localhost:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 mutation {
                     webName: setSetting(key: "global.webName", value: "${this.state.webName}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },
                     domainName: setSetting(key: "global.domainName", value: "${this.state.domainName}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },  
                     siteOpen: setSetting(key: "global.siteOpen", value: "${this.state.siteOpen ? 1 : 0}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },  
                     multiDomainOpen: setSetting(key: "global.multiDomainOpen",
                      value: "${this.state.multiDomainOpen ? 1 : 0}")
                      {
-                    code,
-                    message,
+                        code,
+                        message,
                     },  
                     keepRecord: setSetting(key: "global.keepRecord", value: "${this.state.keepRecord}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },  
                     companyName: setSetting(key: "global.companyName", value: "${this.state.companyName}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },  
                     copyright: setSetting(key: "global.copyright", value: "${this.state.copyright}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },  
                     statisticalCode: setSetting(key: "global.statisticalCode", value: "${this.state.statisticalCode}") {
-                    code,
-                    message,
+                        code,
+                        message,
                     },
                 }
             `,
@@ -450,4 +457,11 @@ class Configurations extends React.Component<WithStyles<keyof typeof styles>, St
         );
     }
 }
-export default withStyles(styles)(Configurations);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(Configurations));

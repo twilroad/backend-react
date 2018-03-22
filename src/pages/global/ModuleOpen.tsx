@@ -20,6 +20,9 @@ import Dialog, {
     DialogContent,
     DialogTitle,
 } from 'material-ui/Dialog';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 
 const styles = {
     evenRow: {
@@ -57,7 +60,11 @@ type State = {
     loading: boolean,
 };
 
-class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    hosts: string;
+}
+
+class ModuleOpen extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -79,7 +86,7 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
         if (!checked) {
             api = 'disableModule';
         }
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     api: ${api}(identification: "${pro.identification}") {
@@ -111,7 +118,7 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
     };
     componentDidMount() {
         const self = this;
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getModules(filters: {installed: true}) {
@@ -178,7 +185,7 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     uninstallModule(identification: "${name}") {
@@ -333,4 +340,11 @@ class ModuleOpen extends React.Component<WithStyles<keyof typeof styles>, State>
         );
     }
 }
-export default withStyles(styles)(ModuleOpen);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(ModuleOpen));

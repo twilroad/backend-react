@@ -12,6 +12,9 @@ import { CircularProgress } from 'material-ui/Progress';
 import axios from 'axios';
 import Cascader from 'antd/lib/cascader';
 import 'antd/lib/cascader/style/css.js';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     root: {
@@ -72,6 +75,7 @@ const stylesType = {} as StyleRules;
 
 interface Props extends WithStyles<keyof typeof stylesType> {
     id: number;
+    hosts: string;
 }
 
 class PageEdit extends React.Component<Props, State> {
@@ -107,7 +111,7 @@ class PageEdit extends React.Component<Props, State> {
     }
     componentDidMount() {
         if (this.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getPageById(findPageById: {
@@ -160,7 +164,7 @@ class PageEdit extends React.Component<Props, State> {
                 list: arr,
             });
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getClassifys(getAllClassify: {
@@ -306,7 +310,7 @@ class PageEdit extends React.Component<Props, State> {
             pageId = 0;
         }
         if (this.state.title && this.state.alias && this.state.pageType === '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                         PageCUD(createPages: {
@@ -346,7 +350,7 @@ class PageEdit extends React.Component<Props, State> {
                 }
             });
         } else if (this.state.title && this.state.alias && this.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                         PageCUD(updatePages: {
@@ -577,4 +581,11 @@ class PageEdit extends React.Component<Props, State> {
         );
     }
 }
-export default withStyles(styles)(PageEdit);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(PageEdit));

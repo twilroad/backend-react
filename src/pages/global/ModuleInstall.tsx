@@ -21,6 +21,9 @@ import Dialog, {
     DialogContent,
     DialogTitle,
 } from 'material-ui/Dialog';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import compose from 'recompose/compose';
 
 const styles = {
     evenRow: {
@@ -67,7 +70,11 @@ type State = {
     errorMessage: string,
 };
 
-class ModuleInstall extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    hosts: string;
+}
+
+class ModuleInstall extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -96,7 +103,7 @@ class ModuleInstall extends React.Component<WithStyles<keyof typeof styles>, Sta
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     installModule(identification: "${name}") {
@@ -142,7 +149,7 @@ class ModuleInstall extends React.Component<WithStyles<keyof typeof styles>, Sta
                 loading: true,
             },
         );
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     uninstallModule(identification: "${name}") {
@@ -200,7 +207,7 @@ class ModuleInstall extends React.Component<WithStyles<keyof typeof styles>, Sta
     };
     componentDidMount() {
         const self = this;
-        axios.post('http://localhost:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getModules(filters: {}) {
@@ -366,4 +373,11 @@ class ModuleInstall extends React.Component<WithStyles<keyof typeof styles>, Sta
         );
     }
 }
-export default withStyles(styles)(ModuleInstall);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(ModuleInstall));

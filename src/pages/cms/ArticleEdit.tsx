@@ -19,6 +19,9 @@ import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
 import PhotoCamera from 'material-ui-icons/PhotoCamera';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     root: {
@@ -99,7 +102,12 @@ type State = {
     imgUrl: string,
 };
 
-class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class ArticleEdit extends React.Component<Props, State> {
     constructor (props: any, state: any) {
         super(props, state);
         let type = '';
@@ -174,7 +182,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
     }
     componentDidMount() {
         if (this.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getArticlesNoLimit(getArticleById: {
@@ -229,7 +237,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                 });
             });
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getClassifys(getAllClassify: {
@@ -354,7 +362,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         const name1 = name.replace(/“/g, '\\"');
         const name2 = name1.replace(/”/g, '\\"');
         if (self.state.pageType === '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                         ArticleCU(createArt: {
@@ -405,7 +413,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                 }
             });
         } else if (self.state.pageType !== '1') {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     mutation {
                          ArticleCU(updateArt: {
@@ -485,7 +493,7 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
                         baseImg: reader.result.substring(reader.result.indexOf(',') + 1),
                     });
                     if (reader.result) {
-                        axios.post('http://192.168.1.121:3000/graphql?', {
+                        axios.post(`${this.props.hosts}graphql?`, {
                             query: `
                             mutation {
                                 ArticleCU(pictureUpload: {
@@ -876,4 +884,11 @@ class ArticleEdit extends React.Component<WithStyles<keyof typeof styles>, State
         );
     }
 }
-export default withStyles(styles)(ArticleEdit);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(ArticleEdit));

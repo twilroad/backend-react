@@ -26,6 +26,9 @@ import Dialog, {
     DialogTitle,
 } from 'material-ui/Dialog';
 import axios from 'axios';
+import { RootState } from '../../redux/reducers';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 
 const styles = {
     evenRow: {
@@ -90,7 +93,12 @@ type State = {
     selection: Array<any>,
 };
 
-class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
+interface Props extends WithStyles<keyof typeof styles> {
+    history: History;
+    hosts: string;
+}
+
+class Page extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
         this.state = {
@@ -113,7 +121,7 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
         };
     }
     componentDidMount() {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getPagesLimit(getAllPage: {
@@ -154,7 +162,7 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
         });
     }
     refreshPage = () => {
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
                     getPagesLimit(getAllPage: {
@@ -273,7 +281,7 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
         } else {
             ids = this.state.selection;
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
+        axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 mutation {
                     PageCUD(deletePages:{
@@ -317,7 +325,7 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
     };
     handleSearch = () => {
         if (this.state.searchValue.length > 0) {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getPagesLimit(serachPages: {
@@ -364,7 +372,7 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
     };
     handlePageClick = (data: any) => {
         if (this.state.pageStatus) {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getPagesLimit(serachPages: {
@@ -406,7 +414,7 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
                 }
             });
         } else {
-            axios.post('http://192.168.1.121:3000/graphql?', {
+            axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
                     getPagesLimit(getAllPage: {
@@ -642,4 +650,11 @@ class Page extends React.Component<WithStyles<keyof typeof styles>, State> {
         );
     }
 }
-export default withStyles(styles)(Page);
+
+function mapStateToProps(state: RootState) {
+    return {
+        hosts: state.hosts,
+    };
+}
+
+export default compose(withStyles(styles))(connect(mapStateToProps)(Page));
