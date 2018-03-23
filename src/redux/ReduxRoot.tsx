@@ -13,7 +13,7 @@ import rootReducer, { RootState } from './reducers';
 
 const logger = (createLogger as any)();
 
-var middleware = applyMiddleware(logger, thunk);
+let middleware = applyMiddleware(logger, thunk);
 
 if (process.env.NODE_ENV === 'development') {
     middleware = composeWithDevTools(middleware);

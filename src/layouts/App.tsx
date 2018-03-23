@@ -63,6 +63,7 @@ import { withStyles, WithStyles, StyleRules, Theme } from 'material-ui/styles';
 import { connect } from 'react-redux';
 import { RootState } from '../redux/reducers';
 import { bindActionCreators } from 'redux';
+import { CircularProgress } from 'material-ui';
 
 export namespace App {
     export interface Props extends RouteComponentProps<void> {
@@ -76,6 +77,7 @@ export namespace App {
     export interface State {
         current: number;
         fullScreen: boolean;
+        loading: boolean;
         open: boolean;
         navs: Array<any>;
         user: object;
@@ -221,6 +223,7 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
     state = {
         open: true,
         current: 0,
+        loading: true,
         navs: [
             {
                 name: '全局',
@@ -586,25 +589,26 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
         this.setState({ selectedOption });
         history.push(selectedOption.url);
     };
-    componentDidMount() {
-        axios.get('./config.json').then((response: Configuration) => {
-            let host = window.location.hostname;
-            let port = window.location.port;
-            let schema = window.location.protocol.replace(':', '');
-            if (response.data && response.data.global && response.data.global.http) {
-                const http = response.data.global.http;
-                if (http.host && http.host !== '*') {
-                    host = http.host;
-                }
-                if (http.port) {
-                    port = http.port.toString();
-                }
-                if (http.schema) {
-                    schema = http.schema;
-                }
+    async componentWillMount() {
+        const response: Configuration = await axios.get('./config.json');
+        let host = window.location.hostname;
+        let port = window.location.port;
+        let schema = window.location.protocol.replace(':', '');
+        if (response.data && response.data.global && response.data.global.http) {
+            const http = response.data.global.http;
+            if (http.host && http.host !== '*') {
+                host = http.host;
             }
-            window.console.log(`${schema}://${host}:${port}/`);
-            this.props.actions.setHosts(`${schema}://${host}:${port}/`);
+            if (http.port) {
+                port = http.port.toString();
+            }
+            if (http.schema) {
+                schema = http.schema;
+            }
+        }
+        this.props.actions.setHosts(`${schema}://${host}:${port}/`);
+        this.setState({
+            loading: false,
         });
     }
     render() {
@@ -956,6 +960,365 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
                 </Switch>
             </HashRouter>
         );
+        if (this.state.loading) {
+            return (
+                <CircularProgress/>
+            );
+        } else {
+            return (
+                <HashRouter  basename="/">
+                    <Switch>
+                        <Route exact path="/login" component={Login} />
+                        <Route
+                            strict
+                            path="/"
+                            children={() => {
+                                return (
+                                    <div className="main-view">
+                                        {
+                                            (wd === 'xs' || wd === 'sm') ?
+                                                <div className="mobile-header">
+                                                    <div className="top-menu">
+                                                        <IconButton
+                                                            aria-haspopup="true"
+                                                            className={this.props.classes.menuBtn}
+                                                            color="primary"
+                                                            onClick={this.toggleDrawer}
+                                                        >
+                                                            {
+                                                                open ? <Close/> : <MenuIcon/>
+                                                            }
+                                                        </IconButton>
+                                                        <Link to="/home">
+                                                            <img
+                                                                className={this.props.classes.logo}
+                                                                src={require('../assets/images/notadd_logo.png')}
+                                                            />
+                                                        </Link>
+                                                        <div>
+                                                            <IconButton
+                                                                aria-haspopup="true"
+                                                                style={{marginLeft: '0'}}
+                                                                className={this.props.classes.menuBtn}
+                                                                onClick={this.handleOpenSearch}
+                                                                color="inherit"
+                                                            >
+                                                                <Search/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                aria-haspopup="true"
+                                                                style={{marginLeft: '0'}}
+                                                                className={this.props.classes.menuBtn}
+                                                                color="inherit"
+                                                            >
+                                                                <MoreHoriz/>
+                                                            </IconButton>
+                                                            <Popover
+                                                                open={openSearch}
+                                                                anchorPosition={{ top: 0, left: 0 }}
+                                                                anchorOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'right',
+                                                                }}
+                                                                transformOrigin={{
+                                                                    vertical: 'top',
+                                                                    horizontal: 'right',
+                                                                }}
+                                                                classes={{
+                                                                    paper: classes.popPaper
+                                                                }}
+                                                                className="mobile-search"
+                                                                onClose={this.handleClose}
+                                                            >
+                                                                <Search className="search-icon" />
+                                                                <Select
+                                                                    name="form-field-name"
+                                                                    className="searchSelect"
+                                                                    value={selectValue}
+                                                                    placeholder="请输入关键词..."
+                                                                    onChange={this.handleChangeSelect}
+                                                                    options={selectOptions}
+                                                                />
+                                                            </Popover>
+                                                        </div>
+                                                    </div>
+                                                    <div className="menus-list">
+                                                        <BottomNavigation
+                                                            value={current}
+                                                            onChange={this.handleChange}
+                                                            showLabels
+                                                            className={this.props.classes.root}
+                                                        >
+                                                            {
+                                                                this.state.navs.map((item, index) => {
+                                                                    return (
+                                                                        <BottomNavigationAction
+                                                                            classes={{
+                                                                                root: this.props.classes.navBtn,
+                                                                                label: this.props.classes.btnLabel,
+                                                                                selected: this.props.classes.selectRoot,
+                                                                                selectedLabel: this.
+                                                                                    props.
+                                                                                    classes.
+                                                                                    selectedLabel,
+                                                                            }}
+                                                                            key={index}
+                                                                            label={item.name}
+                                                                        />
+                                                                    );
+                                                                })
+                                                            }
+                                                        </BottomNavigation>
+                                                        <div className={this.props.classes.navUser}>
+                                                            <IconButton
+                                                                aria-haspopup="true"
+                                                                className={this.props.classes.iconBtn}
+                                                                style={{marginRight: '30px'}}
+                                                                color="inherit"
+                                                            >
+                                                                <Tv/>
+                                                            </IconButton>
+                                                            <IconButton
+                                                                aria-haspopup="true"
+                                                                className={this.props.classes.iconBtn}
+                                                                style={{marginRight: '10px'}}
+                                                                color="inherit"
+                                                            >
+                                                                <Setting/>
+                                                            </IconButton>
+                                                        </div>
+                                                    </div>
+                                                </div> :
+                                                <div className="header">
+                                                    <div className={this.props.classes.headerLeft}>
+                                                        <Link to="/home">
+                                                            <img
+                                                                className={this.props.classes.logo}
+                                                                src={require('../assets/images/notadd_logo.png')}
+                                                            />
+                                                        </Link>
+                                                        <IconButton
+                                                            aria-haspopup="true"
+                                                            className={this.props.classes.menuBtn}
+                                                            color="inherit"
+                                                            onClick={this.toggleDrawer}
+                                                        >
+                                                            {
+                                                                open ? <Close/> : <MenuIcon/>
+                                                            }
+                                                        </IconButton>
+                                                        <IconButton
+                                                            aria-haspopup="true"
+                                                            style={{marginLeft: '0'}}
+                                                            className={this.props.classes.menuBtn}
+                                                            onClick={this.handleFullScreen}
+                                                            color="inherit"
+                                                        >
+                                                            <FullScreen/>
+                                                        </IconButton>
+                                                        <IconButton
+                                                            aria-haspopup="true"
+                                                            style={{marginLeft: '0'}}
+                                                            className={this.props.classes.menuBtn}
+                                                            onClick={this.handleOpenSearch}
+                                                            color="inherit"
+                                                        >
+                                                            <Search/>
+                                                        </IconButton>
+                                                        <Popover
+                                                            open={openSearch}
+                                                            anchorPosition={{ top: 0, left: 0 }}
+                                                            anchorOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            transformOrigin={{
+                                                                vertical: 'top',
+                                                                horizontal: 'right',
+                                                            }}
+                                                            classes={{
+                                                                paper: classes.popPaper
+                                                            }}
+                                                            onClose={this.handleClose}
+                                                        >
+                                                            <Search className="search-icon" />
+                                                            <Select
+                                                                name="form-field-name"
+                                                                className="searchSelect"
+                                                                value={selectValue}
+                                                                placeholder="请输入关键词..."
+                                                                onChange={this.handleChangeSelect}
+                                                                options={selectOptions}
+                                                            />
+                                                        </Popover>
+                                                        <BottomNavigation
+                                                            value={current}
+                                                            onChange={this.handleChange}
+                                                            showLabels
+                                                            className={this.props.classes.root}
+                                                        >
+                                                            {
+                                                                this.state.navs.map((item, index) => {
+                                                                    return (
+                                                                        <BottomNavigationAction
+                                                                            classes={{
+                                                                                root: this.props.classes.navBtn,
+                                                                                label: this.props.classes.btnLabel,
+                                                                                selected: this.props.classes.selectRoot,
+                                                                                selectedLabel: this
+                                                                                    .props
+                                                                                    .classes
+                                                                                    .selectedLabel,
+                                                                            }}
+                                                                            key={index}
+                                                                            label={item.name}
+                                                                        />
+                                                                    );
+                                                                })
+                                                            }
+                                                        </BottomNavigation>
+                                                    </div>
+                                                    <div className={this.props.classes.navUser}>
+                                                        <IconButton
+                                                            aria-haspopup="true"
+                                                            className={this.props.classes.iconBtn}
+                                                            style={{marginRight: '30px'}}
+                                                            color="inherit"
+                                                        >
+                                                            <Tv/>
+                                                        </IconButton>
+                                                        <IconButton
+                                                            aria-haspopup="true"
+                                                            className={this.props.classes.iconBtn}
+                                                            style={{marginRight: '10px'}}
+                                                            color="inherit"
+                                                        >
+                                                            <Setting/>
+                                                        </IconButton>
+                                                    </div>
+                                                </div>
+                                        }
+                                        <div
+                                            className={
+                                                classNames(
+                                                    'view',
+                                                    condition && 'smallSide-view',
+                                                    wd === 'sm' && 'sm-content')
+                                            }
+                                        >
+                                            {
+                                                condition ?
+                                                    <Drawer
+                                                        variant="persistent"
+                                                        classes={{
+                                                            modal: classes.root,
+                                                            docked: classNames(
+                                                                classes.drawerDocked,
+                                                                (!this.state.open || open && wd === 'sm')
+                                                                    ?
+                                                                    classes.drawerPaperClose
+                                                                    :
+                                                                    '',
+                                                                wd === 'sm' && classes.smDrawerPaperClose
+                                                            ),
+                                                            paper: classes.drawerPaper
+                                                        }}
+                                                        onClose={this.toggleDrawer}
+                                                        open={this.state.open}
+                                                    >
+                                                        <Side
+                                                            open={this.state.open}
+                                                            sideNav={this.state.navs[this.state.current].side}
+                                                        />
+                                                    </Drawer>
+                                                    :
+                                                    <Drawer
+                                                        variant="persistent"
+                                                        classes={{
+                                                            modal: classes.root,
+                                                            docked: classNames(
+                                                                classes.drawerDocked,
+                                                                !this.state.open && classes.xsDrawerPaperClose
+                                                            ),
+                                                            paper: classes.drawerPaper
+                                                        }}
+                                                        onClose={this.toggleDrawer}
+                                                        open={this.state.open}
+                                                    >
+                                                        <Side
+                                                            open={this.state.open}
+                                                            sideNav={this.state.navs[this.state.current].side}
+                                                        />
+                                                    </Drawer>
+                                            }
+                                            <div
+                                                className={
+                                                    classNames(
+                                                        'content',
+                                                        this.state.open && wd !== 'sm' && 'move-content'
+                                                    )
+                                                }
+                                            >
+                                                <Switch>
+                                                    <Route exact path="/configurations" component={Configurations}/>
+                                                    <Route exact path="/home" component={Home}/>
+                                                    <Route exact path="/seo" component={Seo}/>
+                                                    <Route exact path="/upload" component={Upload}/>
+                                                    <Route exact path="/menu" component={Menus}/>
+                                                    <Route exact path="/menu/edit/:id" component={MenuEdit}/>
+                                                    <Route exact path="/mail" component={Mail}/>
+                                                    <Route exact path="/debug" component={Debug}/>
+                                                    <Route exact path="/extension" component={Extension}/>
+                                                    <Route exact path="/module/open-module" component={ModuleOpen}/>
+                                                    <Route exact path="/module/domain-config" component={ModuleDomain}/>
+                                                    <Route exact path="/module/import-export" component={ModuleImport}/>
+                                                    <Route exact path="/module/install" component={ModuleInstall}/>
+                                                    <Route exact path="/addon/openAddon" component={AddonOpen}/>
+                                                    <Route exact path="/addon/import-export" component={AddonImport}/>
+                                                    <Route exact path="/addon/install" component={AddonInstall}/>
+                                                    <Route exact path="/cms/article" component={Article}/>
+                                                    <Route exact path="/cms/article/edit/:id" component={ArticleEdit}/>
+                                                    <Route exact path="/cms/article/type" component={ArticleType}/>
+                                                    <Route
+                                                        exact
+                                                        path="/cms/article/type/edit/:id"
+                                                        component={ArticleTypeEdit}
+                                                    />
+                                                    <Route
+                                                        exact
+                                                        path="/cms/article/type/message/:type"
+                                                        component={ArticleEditMessage}
+                                                    />
+                                                    <Route
+                                                        exact
+                                                        path="/cms/article/recycle"
+                                                        component={ArticleRecycle}
+                                                    />
+                                                    <Route exact path="/cms/page" component={Page}/>
+                                                    <Route exact path="/cms/page/edit/:id" component={PageEdit}/>
+                                                    <Route exact path="/cms/page/type" component={PageType}/>
+                                                    <Route
+                                                        exact
+                                                        path="/cms/page/type/edit/:id"
+                                                        component={PageTypeEdit}
+                                                    />
+                                                    <Route exact path="/cms/message" component={Message}/>
+                                                    <Route exact path="/settled" component={MessageSettled}/>
+                                                    <Route exact path="/rent" component={MessageRent}/>
+                                                    <Route exact path="/visit" component={MessageVisit}/>
+                                                    <Route exact path="/user/manager" component={UserManager}/>
+                                                    <Route path="/" render={() => (<Redirect to="/home"/>)}/>
+                                                </Switch>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            }}
+                        />
+                    </Switch>
+                </HashRouter>
+            );
+        }
     }
 }
 
