@@ -260,7 +260,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                         >
                             <DeleteIcon />
                         </IconButton>
-                        <Link to={'/cms/page/edit/' + 'add'}>
+                        <Link to={'/user/manager/add'}>
                             <IconButton
                                 className={this.props.classes.menuBtn}
                                 title="新增"

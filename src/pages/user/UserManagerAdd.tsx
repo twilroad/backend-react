@@ -12,6 +12,8 @@ import Select from 'material-ui/Select';
 import { DateTimePicker } from 'material-ui-pickers';
 import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
+import Cascader from 'antd/lib/cascader';
+import 'antd/lib/cascader/style/css.js';
 
 const styles = {
     root: {
@@ -47,6 +49,8 @@ const styles = {
 type State = {
     birthday: any,
     department: string,
+    departmentId: string,
+    departments: Array<any>,
     email: string,
     imgUrl: string,
     name: string,
@@ -54,6 +58,8 @@ type State = {
     password: string,
     realname: string,
     role: string,
+    roles: Array<any>,
+    roleId: string,
     sex: string,
     sexs: Array<any>,
 };
@@ -64,6 +70,42 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
         this.state = {
             birthday: new Date(),
             department: '',
+            departmentId: '',
+            departments: [
+                {
+                    value: 1,
+                    label: '产品中心',
+                    children: [],
+                },
+                {
+                    expanded: true,
+                    value: 2,
+                    label: '新闻资讯',
+                    children: [
+                        {
+                            value: 21,
+                            label: '媒体报道',
+                            children: [],
+                        },
+                        {
+                            value: 22,
+                            label: '行业资讯',
+                            children: [
+                                {
+                                    value: 221,
+                                    label: '资讯1-1',
+                                    children: [],
+                                },
+                            ],
+                        },
+                        {
+                            value: 23,
+                            label: '企业公告',
+                            children: [],
+                        },
+                    ],
+                },
+            ],
             email: '',
             imgUrl: '',
             name: '',
@@ -71,6 +113,42 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
             password: '',
             realname: '',
             role: '',
+            roleId: '',
+            roles: [
+                {
+                    value: 1,
+                    label: '产品中心',
+                    children: [],
+                },
+                {
+                    expanded: true,
+                    value: 2,
+                    label: '新闻资讯',
+                    children: [
+                        {
+                            value: 21,
+                            label: '媒体报道',
+                            children: [],
+                        },
+                        {
+                            value: 22,
+                            label: '行业资讯',
+                            children: [
+                                {
+                                    value: 221,
+                                    label: '资讯1-1',
+                                    children: [],
+                                },
+                            ],
+                        },
+                        {
+                            value: 23,
+                            label: '企业公告',
+                            children: [],
+                        },
+                    ],
+                },
+            ],
             sex: '0',
             sexs: [
                 {
@@ -96,6 +174,25 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
     getImgURL = (event: any) => {
         const file = event.target.files[0];
         this.setState({ imgUrl: file });
+    };
+    handleChangeRole = (value: any, select: any) => {
+        if (select.length === 0) {
+            this.setState({
+                role: '',
+                roleId: '',
+            });
+        } else {
+            this.setState({
+                role: select[select.length - 1].label,
+                roleId: value[value.length - 1],
+            });
+        }
+    };
+    handleChangeDepartment = (value: any, select: any) => {
+        this.setState({
+            department: select[select.length - 1].label,
+            departmentId: value[value.length - 1],
+        });
     };
 
     render() {
@@ -306,7 +403,6 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                     className={this.props.classes.formControlMargin}
                                 >
                                     <InputLabel
-                                        htmlFor="name-simple"
                                         className={this.props.classes.formLabelFont}
                                     >
                                         所属角色
@@ -316,8 +412,14 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         classes={{
                                             underline: this.props.classes.underline,
                                         }}
-                                        onChange={this.handleChange('role')}
                                         value={this.state.role}
+                                    />
+                                    <Cascader
+                                        changeOnSelect
+                                        className="cascader-picker"
+                                        options={this.state.roles}
+                                        onChange={this.handleChangeRole}
+                                        notFoundContent="Not Found"
                                     />
                                 </FormControl>
                             </Grid>
@@ -337,8 +439,14 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         classes={{
                                             underline: this.props.classes.underline,
                                         }}
-                                        onChange={this.handleChange('department')}
                                         value={this.state.department}
+                                    />
+                                    <Cascader
+                                        changeOnSelect
+                                        className="cascader-picker"
+                                        options={this.state.departments}
+                                        onChange={this.handleChangeDepartment}
+                                        notFoundContent="Not Found"
                                     />
                                 </FormControl>
                             </Grid>
