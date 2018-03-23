@@ -116,11 +116,15 @@ class ArticleType extends React.Component<Props, State> {
             `,
         }).then(response => {
             let arr = new Array();
-            const structures = response.data.data.getClassifys[0].children;
-            if (structures.length === 0 || structures === null) {
+            if (response.data.data.getClassifys.length === 0) {
                 arr = [];
             } else {
-                arr = structures;
+                const structures = response.data.data.getClassifys[0].children;
+                if (structures.length === 0 || structures === null) {
+                    arr = [];
+                } else {
+                    arr = structures;
+                }
             }
             this.setState({ treeData: arr });
         });

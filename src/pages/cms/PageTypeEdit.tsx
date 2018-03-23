@@ -179,52 +179,56 @@ class PageTypeEdit extends React.Component<Props, State> {
             `,
         }).then(response => {
             let arr = new Array();
-            const structures = response.data.data.getClassifys[0].children;
-            if (structures.length === 0 || structures === null) {
+            if (response.data.data.getClassifys.length === 0) {
                 arr = [];
             } else {
-                arr = Object.keys(structures).map(index => {
-                    const item = structures[index];
-                    item.label = item.title;
-                    item.value = item.id;
-                    const children = item.children;
-                    if (item.children !== null) {
-                        item.children = Object.keys(children).map(i => {
-                            const sub = children[i];
-                            sub.label = sub.title;
-                            sub.value = sub.id;
-                            const childs = sub.children;
-                            if (sub.children !== null) {
-                                sub.children = Object.keys(childs).map(s => {
-                                    const su = childs[s];
-                                    su.label = su.title;
-                                    su.value = su.id;
-                                    const childs2 = su.children;
-                                    if (su.children !== null) {
-                                        su.children = Object.keys(childs2).map(s2 => {
-                                            const fours = childs2[s2];
-                                            fours.label = fours.title;
-                                            fours.value = fours.id;
-                                            if (fours.children !== null) {
-                                                const childs3 = fours.children;
-                                                fours.children = Object.keys(childs3).map(s3 => {
-                                                    const five = childs3[s3];
-                                                    five.label = five.title;
-                                                    five.value = five.id;
-                                                    return five;
-                                                });
-                                            }
-                                            return fours;
-                                        });
-                                    }
-                                    return su;
-                                });
-                            }
-                            return sub;
-                        });
-                    }
-                    return item;
-                });
+                const structures = response.data.data.getClassifys[0].children;
+                if (structures.length === 0 || structures === null) {
+                    arr = [];
+                } else {
+                    arr = Object.keys(structures).map(index => {
+                        const item = structures[index];
+                        item.label = item.title;
+                        item.value = item.id;
+                        const children = item.children;
+                        if (item.children !== null) {
+                            item.children = Object.keys(children).map(i => {
+                                const sub = children[i];
+                                sub.label = sub.title;
+                                sub.value = sub.id;
+                                const childs = sub.children;
+                                if (sub.children !== null) {
+                                    sub.children = Object.keys(childs).map(s => {
+                                        const su = childs[s];
+                                        su.label = su.title;
+                                        su.value = su.id;
+                                        const childs2 = su.children;
+                                        if (su.children !== null) {
+                                            su.children = Object.keys(childs2).map(s2 => {
+                                                const fours = childs2[s2];
+                                                fours.label = fours.title;
+                                                fours.value = fours.id;
+                                                if (fours.children !== null) {
+                                                    const childs3 = fours.children;
+                                                    fours.children = Object.keys(childs3).map(s3 => {
+                                                        const five = childs3[s3];
+                                                        five.label = five.title;
+                                                        five.value = five.id;
+                                                        return five;
+                                                    });
+                                                }
+                                                return fours;
+                                            });
+                                        }
+                                        return su;
+                                    });
+                                }
+                                return sub;
+                            });
+                        }
+                        return item;
+                    });
+                }
             }
             this.setState({ types: arr });
         });
