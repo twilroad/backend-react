@@ -42,6 +42,7 @@ import MessageRent from '../pages/cms/MessageRent';
 import MessageVisit from '../pages/cms/MessageVisit';
 
 import UserManager from '../pages/user/UserManager';
+import UserManagerAdd from '../pages/user/UserManagerAdd';
 
 import Drawer from 'material-ui/Drawer';
 import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation';
@@ -943,6 +944,7 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
                                                 <Route exact path="/rent" component={MessageRent}/>
                                                 <Route exact path="/visit" component={MessageVisit}/>
                                                 <Route exact path="/user/manager" component={UserManager}/>
+                                                <Route exact path="/user/manager/add" component={UserManagerAdd}/>
                                                 <Route path="/" render={() => (<Redirect to="/home"/>)}/>
                                             </Switch>
                                         </div>
