@@ -8,10 +8,16 @@ import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
 import ClearIcon from 'material-ui-icons/Clear';
-import ModeEdit from 'material-ui-icons/ModeEdit';
 import Add from 'material-ui-icons/Add';
 import Cached from 'material-ui-icons/Cached';
+import Done from 'material-ui-icons/Done';
+import Clear from 'material-ui-icons/Clear';
+import KeyboardArrowDown from 'material-ui-icons/KeyboardArrowDown';
 import Snackbar from 'material-ui/Snackbar';
+import { MenuItem, MenuList } from 'material-ui/Menu';
+import Collapse from 'material-ui/transitions/Collapse';
+import ClickAwayListener from 'material-ui/utils/ClickAwayListener';
+import { Manager, Target, Popper } from 'react-popper';
 import Table, {
     TableBody,
     TableCell,
@@ -23,7 +29,7 @@ import Dialog, {
     DialogContent,
     DialogTitle,
 } from 'material-ui/Dialog';
-import axios from 'axios';
+// import axios from 'axios';
 
 const styles = {
     evenRow: {
@@ -107,6 +113,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                 {
                     id: 1,
                     check: false,
+                    toggle: false,
                     name: 'ewye',
                     userName: 'admin',
                     status: true,
@@ -118,6 +125,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                 {
                     id: 2,
                     check: false,
+                    toggle: false,
                     name: 'ewye',
                     userName: 'admin',
                     status: false,
@@ -167,7 +175,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
     };
     handleClickRemove = (pro: any) => {
         this.setState({
-            modalName: pro.title,
+            modalName: pro.name,
             modalId: pro.id,
             open: true,
             modalType: 0,
@@ -210,31 +218,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
         } else {
             ids = this.state.selection;
         }
-        axios.post('http://192.168.1.121:3000/graphql?', {
-            query: `
-                mutation {
-                    PageCUD(deletePages:{
-                        id: [${ids}],
-                        pages: ${this.state.currentPage + 1},
-                        limitNum: 10,
-                    })
-                }
-            `,
-        }).then(response => {
-            if (!response.data.errors) {
-                this.setState({
-                    openMessageTip: true,
-                    open: false,
-                    message: '删除页面成功！',
-                });
-                window.setTimeout(
-                    () => {
-                        this.refreshPage();
-                    },
-                    1000,
-                );
-            }
-        });
+        window.console.log(ids);
     };
     handleCloseTip = () => {
         this.setState({ openMessageTip: false });
@@ -244,7 +228,19 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
             currentPage: data.selected - 1,
         });
     };
-
+    handleToggle = (pro: any) => {
+        this.state.list.forEach((item, index) => {
+            if (pro === index) {
+                this.state.list[index].toggle = !this.state.list[index].toggle;
+            } else {
+                this.state.list[index].toggle = false;
+            }
+        });
+        this.setState({ list: this.state.list });
+    };
+    handleCloseToggle = (event: any) => {
+        this.setState({ open: false });
+    };
     render() {
         const { totalItems, rowsPerPage, list, modalType, openMessageTip, message } = this.state;
         return (
@@ -334,7 +330,19 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                                                 {n.id}
                                             </TableCell>
                                             <TableCell className={this.props.classes.tableCell} numeric>
-                                                {n.status}
+                                                {n.status ? <Done
+                                                    style={{
+                                                        width: '23px',
+                                                        height: '12px',
+                                                        color: '#4caf50'
+                                                    }}
+                                                /> : <Clear
+                                                    style={{
+                                                        width: '23px',
+                                                        height: '12px',
+                                                        color: '#f44336'
+                                                    }}
+                                                />}
                                             </TableCell>
                                             <TableCell className={this.props.classes.tableCell} numeric>
                                                 {n.email}
@@ -349,14 +357,43 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                                                 {n.department}
                                             </TableCell>
                                             <TableCell className="table-action-btn" numeric>
-                                                <Link to={'/cms/page/edit/' + n.id}>
-                                                    <IconButton
-                                                        className={this.props.classes.btnEdit}
-                                                        title="编辑"
+                                                <Manager style={{ display: 'inline-block' }}>
+                                                    <Target>
+                                                        <IconButton
+                                                            className={this.props.classes.btnDelete}
+                                                            aria-haspopup="true"
+                                                            onClick={() => this.handleToggle(index)}
+                                                        >
+                                                            <KeyboardArrowDown />
+                                                        </IconButton>
+                                                    </Target>
+                                                    <Popper
+                                                        placement="bottom-start"
+                                                        eventsEnabled={n.toggle}
+                                                        className="popper-bottom-start"
                                                     >
-                                                        <ModeEdit />
-                                                    </IconButton>
-                                                </Link>
+                                                        <ClickAwayListener onClickAway={this.handleCloseToggle}>
+                                                            <Collapse
+                                                                in={n.toggle}
+                                                                style={{ transformOrigin: '0 0 0' }}
+                                                            >
+                                                                <Paper style={{ margin: 3 }}>
+                                                                    <MenuList role="menu" className="table-action-menu">
+                                                                        <MenuItem onClick={this.handleCloseToggle}>
+                                                                            封禁
+                                                                        </MenuItem>
+                                                                        <MenuItem onClick={this.handleCloseToggle}>
+                                                                            编辑
+                                                                        </MenuItem>
+                                                                        <MenuItem onClick={this.handleCloseToggle}>
+                                                                            权限
+                                                                        </MenuItem>
+                                                                    </MenuList>
+                                                                </Paper>
+                                                            </Collapse>
+                                                        </ClickAwayListener>
+                                                    </Popper>
+                                                </Manager>
                                                 <IconButton
                                                     className={this.props.classes.btnDelete}
                                                     onClick={() => this.handleClickRemove(n)}
@@ -417,8 +454,8 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                     </DialogTitle>
                     <DialogContent className="dialog-content">
                         {
-                            modalType === 0 ? <h4>确定要删除页面"{this.state.modalName}"吗?</h4> :
-                                <h4>确定要删除这"{this.state.modalNum}"个页面吗?</h4>}
+                            modalType === 0 ? <h4>确定要删除用户"{this.state.modalName}"吗?</h4> :
+                                <h4>确定要删除这"{this.state.modalNum}"个用户吗?</h4>}
                     </DialogContent>
                     <DialogActions className="dialog-actions">
                         <Button onClick={this.handleClose}>

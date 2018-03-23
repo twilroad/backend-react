@@ -34,6 +34,25 @@
 .root-paper {
     padding: 40px 30px;
 }
+.table-action-menu {
+    padding: 6px !important;
+    width: 199px;
+}
+.table-action-menu li {
+    padding: 0;
+    line-height: 34px;
+    height: 34px;
+    padding-left: 8px;
+    color: #808080;
+    font-size: 12px;
+}
+.table-action-menu li:hover {
+    background-color: #f7f7f7;
+}
+.popper-bottom-start {
+    z-index: 10;
+    left: -140px !important;
+}
 @media (max-width: 479px) {
     .root-paper {
         padding: 30px 20px;
@@ -51,5 +70,8 @@
     }
     .root-paper .table-head tr th {
         min-width: 96px;
+    }
+    .popper-bottom-start {
+        left: -30px !important;
     }
 }
