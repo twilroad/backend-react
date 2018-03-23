@@ -5,6 +5,7 @@ import { FormControl } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
+import Clear from 'material-ui-icons/Clear';
 import PhotoCamera from 'material-ui-icons/PhotoCamera';
 import Input, { InputLabel } from 'material-ui/Input';
 import { MenuItem } from 'material-ui/Menu';
@@ -62,6 +63,8 @@ type State = {
     roleId: string,
     sex: string,
     sexs: Array<any>,
+    clear1: boolean,
+    clear2: boolean,
 };
 
 class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, State> {
@@ -160,6 +163,8 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                     sex: '女',
                 },
             ],
+            clear1: false,
+            clear2: false,
         };
     }
     handleChange = (name: any) => (event: any) => {
@@ -185,14 +190,41 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
             this.setState({
                 role: select[select.length - 1].label,
                 roleId: value[value.length - 1],
+                clear1: true,
             });
         }
     };
     handleChangeDepartment = (value: any, select: any) => {
-        this.setState({
-            department: select[select.length - 1].label,
-            departmentId: value[value.length - 1],
-        });
+        if (select.length === 0) {
+            this.setState({
+                department: '',
+                departmentId: '',
+            });
+        } else {
+            this.setState({
+                department: select[select.length - 1].label,
+                departmentId: value[value.length - 1],
+                clear2: true,
+            });
+        }
+    };
+    clearCasca = (pro: any) => {
+        if (pro === 1) {
+            this.setState({
+                role: '',
+                roleId: '',
+                clear1: false,
+            });
+        } else if (pro === 2) {
+            this.setState({
+                department: '',
+                departmentId: '',
+                clear2: false,
+            });
+        }
+    };
+    handleSubmit = () => {
+        window.console.log(this.state.role);
     };
 
     render() {
@@ -421,6 +453,15 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         onChange={this.handleChangeRole}
                                         notFoundContent="Not Found"
                                     />
+                                    {
+                                        this.state.clear1 &&
+                                        <span
+                                            className="ant-cascader-picker-clear"
+                                            onClick={() => this.clearCasca(1)}
+                                        >
+                                            <Clear style={{ width: '16px' }}/>
+                                        </span>
+                                    }
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -448,10 +489,24 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         onChange={this.handleChangeDepartment}
                                         notFoundContent="Not Found"
                                     />
+                                    {
+                                        this.state.clear2 &&
+                                        <span
+                                            className="ant-cascader-picker-clear"
+                                            onClick={() => this.clearCasca(2)}
+                                        >
+                                            <Clear style={{ width: '16px' }}/>
+                                        </span>
+                                    }
                                 </FormControl>
                             </Grid>
                         </Grid>
-                        <Button variant="raised" color="primary" style={{marginTop: 34, fontSize: 12, borderRadius: 4}}>
+                        <Button
+                            variant="raised"
+                            color="primary"
+                            style={{marginTop: 34, fontSize: 12, borderRadius: 4}}
+                            onClick={this.handleSubmit}
+                        >
                             确认提交
                         </Button>
                     </form>
