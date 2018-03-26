@@ -455,6 +455,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                         </IconButton>
                     </DialogTitle>
                     <DialogContent className="dialog-content">
+                        <h3>确定要删除此项内容吗？ </h3>
                         {
                             modalType === 0 ? <h4>确定要删除用户"{this.state.modalName}"吗?</h4> :
                                 <h4>确定要删除这"{this.state.modalNum}"个用户吗?</h4>}
@@ -464,7 +465,7 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                             取消
                         </Button>
                         <Button onClick={this.handleSubmit} autoFocus>
-                            确认提交
+                            删除
                         </Button>
                     </DialogActions>
                 </Dialog>

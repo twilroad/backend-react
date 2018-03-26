@@ -18,6 +18,14 @@
 .dialog-content-action .dialog-content {
     padding: 0 20px;
 }
+.dialog-content-action .dialog-content h3 {
+    font-weight: 500;
+    font-size: 18px;
+}
+.dialog-content-action .dialog-content h3 + h4 {
+    font-size: 12px;
+    color: #808080;
+}
 .dialog-content-action .dialog-content h4{
     font-size: 18px;
     font-weight: 500;
