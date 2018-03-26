@@ -40,11 +40,16 @@
 }
 .table-action-menu li {
     padding: 0;
+    color: #808080;
     line-height: 34px;
     height: 34px;
     padding-left: 8px;
-    color: #808080;
     font-size: 12px;
+}
+.table-action-menu li a {
+    color: #808080;
+    display: block;
+    width: 100%;
 }
 .table-action-menu li:hover {
     background-color: #f7f7f7;
