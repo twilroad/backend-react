@@ -95,6 +95,7 @@ type State = {
     clear1: boolean,
     clear2: boolean,
     roleModal: boolean,
+    userRole: string,
     userRoles: Array<any>,
     roleSearchType: string,
 };
@@ -199,6 +200,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
             clear2: false,
             roleModal: false,
             userRoles: [],
+            userRole: '',
             roleSearchType: '按模块查找',
         };
     }
@@ -219,21 +221,17 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
         this.setState({
             roleModal: false,
         });
-        // if (select.length === 0) {
-        //     this.setState({
-        //         role: '',
-        //         roleId: '',
-        //     });
-        // } else {
-        //     this.setState({
-        //         role: select[select.length - 1].label,
-        //         roleId: value[value.length - 1],
-        //         clear1: true,
-        //     });
-        // }
+    };
+    handleRoleModule = (value: any, select: any) => {
+        const arr = new Array();
+        arr.push(select[select.length - 1].label);
+        this.setState({
+            role: select[select.length - 1].label,
+            roleId: value[value.length - 1],
+            userRoles: arr,
+        });
     };
     handleOpenRole = () => {
-        window.console.log(11);
         this.setState({
             roleModal: true,
         });
@@ -494,7 +492,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         classes={{
                                             underline: this.props.classes.underline,
                                         }}
-                                        value={this.state.role}
+                                        value={this.state.userRole}
                                     />
                                     {/*<Cascader
                                         changeOnSelect
@@ -667,7 +665,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                     changeOnSelect
                                     className="cascader-picker"
                                     options={this.state.roles}
-                                    onChange={this.handleChangeRole}
+                                    onChange={this.handleRoleModule}
                                     notFoundContent="Not Found"
                                 />
                             </FormControl>

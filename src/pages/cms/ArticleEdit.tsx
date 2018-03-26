@@ -506,7 +506,7 @@ class ArticleEdit extends React.Component<Props, State> {
                             mutation {
                                 ArticleCU(pictureUpload: {
                                     id: ${id},
-                                    bucketName: "public",
+                                    bucketName: "chuangyedajie-src",
                                     rawName: "${self.state.img}",
                                     base64: "${reader.result.substring(reader.result.indexOf(',') + 1)}",
                                 })
