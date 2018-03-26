@@ -379,8 +379,10 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                                                             >
                                                                 <Paper style={{ margin: 3 }}>
                                                                     <MenuList role="menu" className="table-action-menu">
-                                                                        <MenuItem onClick={this.handleCloseToggle}>
-                                                                            封禁
+                                                                        <MenuItem>
+                                                                            <Link to={'/user/manager/ban'}>
+                                                                                封禁
+                                                                            </Link>
                                                                         </MenuItem>
                                                                         <MenuItem onClick={this.handleCloseToggle}>
                                                                             编辑
