@@ -1,7 +1,7 @@
 import * as React from 'react';
 import withStyles, { WithStyles } from 'material-ui/styles/withStyles';
 import Paper from 'material-ui/Paper';
-import { FormControl } from 'material-ui/Form';
+import { FormControl, FormControlLabel } from 'material-ui/Form';
 import Grid from 'material-ui/Grid';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
@@ -15,6 +15,12 @@ import DateFnsUtils from 'material-ui-pickers/utils/date-fns-utils';
 import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsProvider';
 import Cascader from 'antd/lib/cascader';
 import 'antd/lib/cascader/style/css.js';
+import Radio, { RadioGroup } from 'material-ui/Radio';
+import Dialog, {
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+} from 'material-ui/Dialog';
 
 const styles = {
     root: {
@@ -46,6 +52,29 @@ const styles = {
         'color': '#fff',
         'cursor': 'pointer',
     },
+    formLabel: {
+        'color': '#808080',
+        'flex-direction': 'row-reverse',
+        'font-size': '12px !important',
+        'margin': '0',
+        'width': '100%',
+    },
+    FormControlLabel: {
+        'font-size': '12px',
+    },
+    FormControlRoot: {
+        'margin-left': '0',
+        'margin-right': '0',
+        width: '50%',
+    },
+    radioDefault: {
+        'margin-right': '5px',
+        'width': 'auto',
+        height: '32px',
+    },
+    radioRoot: {
+        'flex-direction': 'row',
+    },
 };
 type State = {
     birthday: any,
@@ -65,6 +94,9 @@ type State = {
     sexs: Array<any>,
     clear1: boolean,
     clear2: boolean,
+    roleModal: boolean,
+    userRoles: Array<any>,
+    roleSearchType: string,
 };
 
 class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, State> {
@@ -165,6 +197,9 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
             ],
             clear1: false,
             clear2: false,
+            roleModal: false,
+            userRoles: [],
+            roleSearchType: '按模块查找',
         };
     }
     handleChange = (name: any) => (event: any) => {
@@ -180,19 +215,31 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
         const file = event.target.files[0];
         this.setState({ imgUrl: file });
     };
-    handleChangeRole = (value: any, select: any) => {
-        if (select.length === 0) {
-            this.setState({
-                role: '',
-                roleId: '',
-            });
-        } else {
-            this.setState({
-                role: select[select.length - 1].label,
-                roleId: value[value.length - 1],
-                clear1: true,
-            });
-        }
+    handleChangeRole = () => {
+        this.setState({
+            roleModal: false,
+        });
+        // if (select.length === 0) {
+        //     this.setState({
+        //         role: '',
+        //         roleId: '',
+        //     });
+        // } else {
+        //     this.setState({
+        //         role: select[select.length - 1].label,
+        //         roleId: value[value.length - 1],
+        //         clear1: true,
+        //     });
+        // }
+    };
+    handleOpenRole = () => {
+        window.console.log(11);
+        this.setState({
+            roleModal: true,
+        });
+    };
+    handleClose = () => {
+        this.setState({ roleModal: false });
     };
     handleChangeDepartment = (value: any, select: any) => {
         if (select.length === 0) {
@@ -236,6 +283,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                 <h4 className="title">新增</h4>
                 <Paper className={this.props.classes.root}>
                     <form className={this.props.classes.container} noValidate autoComplete="off">
+                        <p style={{fontSize: '18px', marginBottom: '14px'}}>基本资料</p>
                         <Grid container spacing={40} style={{marginTop: '0px'}}>
                             <Grid item xs={12} sm={6}>
                                 <FormControl
@@ -332,6 +380,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                 </FormControl>
                             </Grid>
                         </Grid>
+                        <p style={{fontSize: '18px', marginBottom: '16px'}}>详细资料</p>
                         <Grid container spacing={40} style={{marginTop: '0px'}}>
                             <Grid item xs={12} sm={6}>
                                 <FormControl
@@ -432,6 +481,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                             <Grid item xs={12} sm={6}>
                                 <FormControl
                                     fullWidth
+                                    onClick={this.handleOpenRole}
                                     className={this.props.classes.formControlMargin}
                                 >
                                     <InputLabel
@@ -446,7 +496,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         }}
                                         value={this.state.role}
                                     />
-                                    <Cascader
+                                    {/*<Cascader
                                         changeOnSelect
                                         className="cascader-picker"
                                         options={this.state.roles}
@@ -461,7 +511,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         >
                                             <Clear style={{ width: '16px' }}/>
                                         </span>
-                                    }
+                                    }*/}
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -511,6 +561,127 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                         </Button>
                     </form>
                 </Paper>
+                <Dialog
+                    open={this.state.roleModal}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                    className="dialog-content-action"
+                >
+                    <DialogTitle
+                        id="alert-dialog-title"
+                        className="dialog-title"
+                    >
+                        <IconButton
+                            onClick={this.handleClose}
+                        >
+                            <Clear />
+                        </IconButton>
+                    </DialogTitle>
+                    <DialogContent className="dialog-content">
+                        <form noValidate autoComplete="off" className="dialog-user-manager">
+                            <p style={{marginBottom: '27px'}}>所属角色</p>
+                            <FormControl
+                                fullWidth
+                                className={this.props.classes.formControlMargin}
+                            >
+                                <InputLabel
+                                    className={this.props.classes.formLabelFont}
+                                >
+                                    用户角色
+                                </InputLabel>
+                                <Input
+                                    className={this.props.classes.formLabelFont}
+                                    classes={{
+                                        underline: this.props.classes.underline,
+                                    }}
+                                    value={this.state.userRoles}
+                                />
+                            </FormControl>
+                            <p>查找角色</p>
+                            <FormControl
+                                fullWidth
+                                className={this.props.classes.formControlMargin}
+                                style={{marginBottom: '20px'}}
+                            >
+                                <RadioGroup
+                                    aria-label="gender"
+                                    name="gender1"
+                                    classes={{
+                                        root: this.props.classes.radioRoot,
+                                    }}
+                                    value={this.state.roleSearchType}
+                                    onChange={this.handleChange('roleSearchType')}
+                                >
+                                    <FormControlLabel
+                                        style={{width: '33%'}}
+                                        classes={{
+                                            root: this.props.classes.FormControlRoot,
+                                            label: this.props.classes.FormControlLabel
+                                        }}
+                                        value="按模块查找"
+                                        control={
+                                            <Radio
+                                                color="primary"
+                                                classes={{
+                                                    default: this.props.classes.radioDefault,
+                                                }}
+                                            />
+                                        }
+                                        label="按模块查找"
+                                    />
+                                    <FormControlLabel
+                                        style={{width: '33%'}}
+                                        classes={{
+                                            root: this.props.classes.FormControlRoot,
+                                            label: this.props.classes.FormControlLabel
+                                        }}
+                                        value="关键字搜索"
+                                        control={<Radio
+                                            color="primary"
+                                            classes={{
+                                                default: this.props.classes.radioDefault,
+                                            }}
+                                        />}
+                                        label="关键字搜索"
+                                    />
+                                </RadioGroup>
+                            </FormControl>
+                            <FormControl
+                                fullWidth
+                                onClick={this.handleOpenRole}
+                                className={this.props.classes.formControlMargin}
+                            >
+                                <InputLabel
+                                    className={this.props.classes.formLabelFont}
+                                >
+                                    请选择模块
+                                </InputLabel>
+                                <Input
+                                    className={this.props.classes.formLabelFont}
+                                    classes={{
+                                        underline: this.props.classes.underline,
+                                    }}
+                                    value={this.state.role}
+                                />
+                                <Cascader
+                                    changeOnSelect
+                                    className="cascader-picker"
+                                    options={this.state.roles}
+                                    onChange={this.handleChangeRole}
+                                    notFoundContent="Not Found"
+                                />
+                            </FormControl>
+                        </form>
+                    </DialogContent>
+                    <DialogActions className="dialog-actions">
+                        <Button onClick={this.handleClose}>
+                            取消
+                        </Button>
+                        <Button onClick={this.handleChangeRole} autoFocus>
+                            确认
+                        </Button>
+                    </DialogActions>
+                </Dialog>
             </div>
         );
     }
