@@ -16,6 +16,7 @@ import MuiPickersUtilsProvider from 'material-ui-pickers/utils/MuiPickersUtilsPr
 import Cascader from 'antd/lib/cascader';
 import 'antd/lib/cascader/style/css.js';
 import Radio, { RadioGroup } from 'material-ui/Radio';
+// import { ListItemText } from 'material-ui/List';
 import Dialog, {
     DialogActions,
     DialogContent,
@@ -97,6 +98,8 @@ type State = {
     roleModal: boolean,
     userRole: string,
     userRoles: Array<any>,
+    roleNames: Array<any>,
+    keyword: Array<any>,
     roleSearchType: string,
 };
 
@@ -153,37 +156,31 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
             roles: [
                 {
                     value: 1,
-                    label: '产品中心',
-                    children: [],
-                },
-                {
-                    expanded: true,
-                    value: 2,
-                    label: '新闻资讯',
+                    label: '商城',
                     children: [
                         {
                             value: 21,
-                            label: '媒体报道',
-                            children: [],
-                        },
-                        {
-                            value: 22,
-                            label: '行业资讯',
-                            children: [
-                                {
-                                    value: 221,
-                                    label: '资讯1-1',
-                                    children: [],
-                                },
-                            ],
-                        },
-                        {
-                            value: 23,
-                            label: '企业公告',
+                            label: '总管理员',
                             children: [],
                         },
                     ],
                 },
+                {
+                    expanded: true,
+                    value: 2,
+                    label: '本初网络',
+                    children: [
+                        {
+                            value: 21,
+                            label: '软件事业部',
+                            children: [],
+                        },
+                    ],
+                },
+            ],
+            roleNames: [
+                '商城-总管理员',
+                '本初网络-软件事业部',
             ],
             sex: '0',
             sexs: [
@@ -200,6 +197,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
             clear2: false,
             roleModal: false,
             userRoles: [],
+            keyword: [],
             userRole: '',
             roleSearchType: '按模块查找',
         };
@@ -223,12 +221,25 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
         });
     };
     handleRoleModule = (value: any, select: any) => {
-        const arr = new Array();
-        arr.push(select[select.length - 1].label);
+        this.state.userRoles.push({
+            name: select[select.length - 1].label,
+        });
         this.setState({
             role: select[select.length - 1].label,
             roleId: value[value.length - 1],
+            // userRoles: arr,
+        });
+    };
+    handleDeleteRole = (index: number) => {
+        const arr = Object.assign([], this.state.userRoles);
+        let str = this.state.role;
+        arr.splice(index, 1);
+        if (arr.length === 0) {
+            str = '';
+        }
+        this.setState({
             userRoles: arr,
+            role: str,
         });
     };
     handleOpenRole = () => {
@@ -494,22 +505,6 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                         }}
                                         value={this.state.userRole}
                                     />
-                                    {/*<Cascader
-                                        changeOnSelect
-                                        className="cascader-picker"
-                                        options={this.state.roles}
-                                        onChange={this.handleChangeRole}
-                                        notFoundContent="Not Found"
-                                    />
-                                    {
-                                        this.state.clear1 &&
-                                        <span
-                                            className="ant-cascader-picker-clear"
-                                            onClick={() => this.clearCasca(1)}
-                                        >
-                                            <Clear style={{ width: '16px' }}/>
-                                        </span>
-                                    }*/}
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -588,12 +583,29 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                     用户角色
                                 </InputLabel>
                                 <Input
-                                    className={this.props.classes.formLabelFont}
+                                    className="role-title"
+                                    style={{fontSize: '16px'}}
                                     classes={{
                                         underline: this.props.classes.underline,
                                     }}
-                                    value={this.state.userRoles}
+                                    value={this.state.role}
                                 />
+                                <div className="select-user-roles">
+                                    {
+                                        this.state.userRoles.map((item: any, index: number) => {
+                                            return (
+                                                <div key={index}>
+                                                    <span>{item.name}</span>
+                                                    <IconButton
+                                                        onClick={() => this.handleDeleteRole(index)}
+                                                    >
+                                                        <Clear />
+                                                    </IconButton>
+                                                </div>
+                                            );
+                                        })
+                                    }
+                                </div>
                             </FormControl>
                             <p>查找角色</p>
                             <FormControl
@@ -644,6 +656,7 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                     />
                                 </RadioGroup>
                             </FormControl>
+                            {this.state.roleSearchType === '按模块查找' &&
                             <FormControl
                                 fullWidth
                                 onClick={this.handleOpenRole}
@@ -662,13 +675,35 @@ class UserManagerAdd extends React.Component<WithStyles<keyof typeof styles>, St
                                     value={this.state.role}
                                 />
                                 <Cascader
-                                    changeOnSelect
                                     className="cascader-picker"
                                     options={this.state.roles}
                                     onChange={this.handleRoleModule}
                                     notFoundContent="Not Found"
                                 />
-                            </FormControl>
+                            </FormControl>}
+                            {/*{this.state.roleSearchType === '关键字搜索' &&
+                            <FormControl
+                                fullWidth
+                                onClick={this.handleOpenRole}
+                                className={this.props.classes.formControlMargin}
+                            >
+                                <InputLabel
+                                    className={this.props.classes.formLabelFont}
+                                >
+                                    请输入关键字
+                                </InputLabel>
+                                <Select
+                                    value={this.state.keyword}
+                                    onChange={this.handleChange('keyword')}
+                                    input={<Input id="select-multiple" />}
+                                >
+                                    {this.state.roleNames.map((name: any) => (
+                                        <MenuItem key={name} value={name}>
+                                            <ListItemText primary={name} />
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>}*/}
                         </form>
                     </DialogContent>
                     <DialogActions className="dialog-actions">
