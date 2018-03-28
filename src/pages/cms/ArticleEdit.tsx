@@ -389,7 +389,7 @@ class ArticleEdit extends React.Component<Props, State> {
                             activityAddress: "${self.state.activityAddress}"
                             source: "${self.state.source}",
                             sourceUrl: "${self.state.sourceUrl}",
-                            pictureUrl: "${pictureStr}",
+                            pictureUrl: "https://${pictureStr}",
                             bucketName: "${self.state.bucketName}",
                             pictureName: "${self.state.pictureName}",
                             type: "${self.state.type}",
@@ -441,7 +441,7 @@ class ArticleEdit extends React.Component<Props, State> {
                              activityAddress: "${self.state.activityAddress}"
                              source: "${self.state.source}",
                              sourceUrl: "${self.state.sourceUrl}",
-                             pictureUrl: "${pictureStr}",
+                             pictureUrl: "https://${pictureStr}",
                              bucketName: "${self.state.bucketName}",
                              pictureName: "${self.state.pictureName}",
                              type: "${self.state.type}",
@@ -521,7 +521,7 @@ class ArticleEdit extends React.Component<Props, State> {
                                         open: true,
                                         loading: false,
                                         errorMessage: data.MessageCodeError,
-                                        imgUrl: data.pictureUrl,
+                                        imgUrl: `https://${data.pictureUrl}`,
                                         bucketName: data.bucketName,
                                         pictureName: data.pictureName,
                                         type: data.type,

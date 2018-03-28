@@ -44,6 +44,7 @@ import MessageVisit from '../pages/cms/MessageVisit';
 import UserManager from '../pages/user/UserManager';
 import UserManagerAdd from '../pages/user/UserManagerAdd';
 import UserManagerBan from '../pages/user/UserManagerBan';
+import UserManagerAuthority from '../pages/user/UserManagerAuthority';
 import UserRecycle from '../pages/user/UserRecycle';
 import UserMessage from '../pages/user/UserMessage';
 
@@ -969,6 +970,11 @@ class App extends React.Component<WithStyles<keyof typeof stylesType> & App.Prop
                                                     <Route exact path="/user/manager" component={UserManager}/>
                                                     <Route exact path="/user/manager/add" component={UserManagerAdd}/>
                                                     <Route exact path="/user/manager/ban" component={UserManagerBan}/>
+                                                    <Route
+                                                        exact
+                                                        path="/user/manager/authority"
+                                                        component={UserManagerAuthority}
+                                                    />
                                                     <Route exact path="/user/recycle" component={UserRecycle}/>
                                                     <Route exact path="/user/message" component={UserMessage}/>
                                                     <Route path="/" render={() => (<Redirect to="/home"/>)}/>
