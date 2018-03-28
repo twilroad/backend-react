@@ -388,7 +388,9 @@ class UserManager extends React.Component<WithStyles<keyof typeof styles>, State
                                                                             编辑
                                                                         </MenuItem>
                                                                         <MenuItem onClick={this.handleCloseToggle}>
-                                                                            权限
+                                                                            <Link to={'/user/manager/authority'}>
+                                                                                权限
+                                                                            </Link>
                                                                         </MenuItem>
                                                                     </MenuList>
                                                                 </Paper>
