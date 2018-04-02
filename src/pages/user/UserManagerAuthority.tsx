@@ -2,18 +2,18 @@ import * as React from 'react';
 import withStyles, { WithStyles } from 'material-ui/styles/withStyles';
 import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
-import Grid from 'material-ui/Grid';
 import Tabs, { Tab } from 'material-ui/Tabs';
 import Snackbar from 'material-ui/Snackbar';
 import { CircularProgress } from 'material-ui/Progress';
+import Checkbox from 'material-ui/Checkbox';
+import { FormControl, FormGroup, FormControlLabel } from 'material-ui/Form';
 
 const styles = {
     root: {
         'padding': '40px 30px',
     },
     container: {
-        'display': 'flex',
-        'flex-wrap': 'wrap',
+        'padding': '32px 30px 40px',
         'margin': '0',
     },
     formLabelFont: {
@@ -57,6 +57,7 @@ const styles = {
     },
 };
 type State = {
+    mall: Array<any>,
     tab: number,
     loading: boolean,
     open: boolean,
@@ -75,8 +76,82 @@ class UserManagerAuthority extends React.Component<WithStyles<keyof typeof style
             open: false,
             errorMessage: '',
             error: false,
+            mall: [
+                {
+                    id: 1,
+                    name: '商品管理',
+                    selected: false,
+                    children: [
+                        {
+                            id: 11,
+                            name: '商品添加',
+                            selected: false,
+                        },
+                        {
+                            id: 12,
+                            name: '商品编辑',
+                            selected: false,
+                        },
+                        {
+                            id: 13,
+                            name: '添加分类',
+                            selected: false,
+                        },
+                    ],
+                },
+                {
+                    id: 2,
+                    name: '库存管理',
+                    selected: false,
+                    children: [
+                        {
+                            id: 21,
+                            name: '库存添加',
+                            selected: false,
+                        },
+                        {
+                            id: 22,
+                            name: '库存编辑',
+                            selected: false,
+                        },
+                        {
+                            id: 23,
+                            name: '添加分类',
+                            selected: false,
+                        },
+                    ],
+                },
+            ],
         };
     }
+    handleChangeAll = (pro: any) => (event: any, checked: any) => {
+        pro.selected = checked;
+        if (pro.selected) {
+            for (let i = 0; i < pro.children.length; i += 1) {
+                pro.children[i].selected = true;
+            }
+        } else {
+            for (let i = 0; i < pro.children.length; i += 1) {
+                pro.children[i].selected = false;
+            }
+        }
+        this.setState({
+            [pro]: checked,
+        });
+    };
+    handleChange = (type: any, item: any) => (event: any, checked: any) => {
+        type.selected = true;
+        item.selected = checked;
+        for (let i = 0; i < type.children.length; i += 1) {
+            if (type.children[i].selected === false) {
+                type.selected = false;
+            }
+        }
+        this.setState({
+            [item]: checked,
+            [type]: type.selected,
+        });
+    };
     handleChangeTab = (event: any, value: number) => {
         this.setState({ tab: value });
     };
@@ -89,7 +164,7 @@ class UserManagerAuthority extends React.Component<WithStyles<keyof typeof style
 
     render() {
         return (
-            <div className="user-form-gird">
+            <div>
                 <p className="crumbs">
                     用户中心 <b>/</b> 用户管理 <b>/</b> 用户管理
                 </p>
@@ -118,27 +193,81 @@ class UserManagerAuthority extends React.Component<WithStyles<keyof typeof style
                     {
                         this.state.tab === 0 &&
                         <form className={this.props.classes.container} noValidate autoComplete="off">
-                            <Grid container spacing={40}>
-                                <Button
-                                    variant="raised"
-                                    color="primary"
-                                    style={{
-                                        marginTop: 34,
-                                        fontSize: 12,
-                                        borderRadius: 4
-                                    }}
-                                    disabled={
-                                        this.state.loading
-                                    }
-                                    className={
-                                        this.state.loading ?
-                                            'disabled-btn' : ''
-                                    }
-                                    onClick={this.handleSubmit}
-                                >
-                                    {this.state.loading ?  <div><CircularProgress size={24}/></div> : '确认提交'}
-                                </Button>
-                            </Grid>
+                            <Button
+                                style={{
+                                    backgroundColor: '#ededed',
+                                    color: '#808080',
+                                    fontSize: '12px',
+                                    minHeight: '24px',
+                                    display: 'block',
+                                    padding: '0',
+                                }}
+                            >
+                                恢复默认
+                            </Button>
+                            {
+                                this.state.mall.map((type: any) => {
+                                    return (
+                                        <FormControl
+                                            key={type.id}
+                                            className="user-manager-authority"
+                                            style={{display: 'block', marginTop: 20}}
+                                        >
+                                            <FormControlLabel
+                                                control={
+                                                    <Checkbox
+                                                        checked={type.selected}
+                                                        onChange={this.handleChangeAll(type)}
+                                                        value="type.selected"
+                                                        color="primary"
+                                                    />
+                                                }
+                                                label={type.name}
+                                            />
+                                            <FormGroup row>
+                                                {
+                                                    type.children.map((item: any) => {
+                                                        return (
+                                                            <FormControlLabel
+                                                                control={
+                                                                    <Checkbox
+                                                                        checked={item.selected}
+                                                                        onChange={this.handleChange(type, item)}
+                                                                        value="item.selected"
+                                                                        color="primary"
+                                                                    />
+                                                                }
+                                                                label={item.name}
+                                                                key={item.id}
+                                                            />
+                                                        );
+                                                    })
+                                                }
+                                            </FormGroup>
+                                        </FormControl>
+                                    );
+                                })
+                            }
+                            <Button
+                                variant="raised"
+                                color="primary"
+                                style={{
+                                    marginTop: 34,
+                                    fontSize: 12,
+                                    display: 'block',
+                                    borderRadius: 4
+                                }}
+                                disabled={
+                                    this.state.loading
+                                }
+                                className={
+                                    this.state.loading ?
+                                        'disabled-btn' : ''
+                                }
+                                onClick={this.handleSubmit}
+                            >
+                                {this.state.loading ?  <div><CircularProgress size={24}/></div> : '确认提交'}
+                            </Button>
                         </form>
                     }
                     {
@@ -147,7 +276,7 @@ class UserManagerAuthority extends React.Component<WithStyles<keyof typeof style
                     }
                     {
                         this.state.tab === 2 &&
-                        <div className={this.props.classes.container}>1</div>
+                        <div className={this.props.classes.container}>2</div>
                     }
                 </Paper>
                 <Snackbar
