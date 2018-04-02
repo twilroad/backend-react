@@ -82,6 +82,10 @@
     height: 1em;
 }
 .rst__rowToolbar .rst__toolbarButton:first-child {
+    right: 57px;
+    top: -13px;
+}
+.rst__rowToolbar .rst__toolbarButton:nth-child(2) {
     right: 28px;
     top: -12px;
 }

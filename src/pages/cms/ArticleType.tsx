@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Paper from 'material-ui/Paper';
 import SortableTree from 'react-sortable-tree';
 import ModeEdit from 'material-ui-icons/ModeEdit';
+import Visibility from 'material-ui-icons/Visibility';
 import Button from 'material-ui/Button';
 import IconButton from 'material-ui/IconButton';
 import DeleteIcon from 'material-ui-icons/Delete';
@@ -21,6 +22,7 @@ import axios from 'axios';
 import { RootState } from '../../redux/reducers';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
+import { History } from 'history';
 
 const styles = {
     root: {
@@ -52,11 +54,15 @@ type State = {
     transition: any,
     errorMessage: string,
     error: boolean,
+    typeId: number,
+    typeName: string,
 };
 
 interface Props extends WithStyles<keyof typeof styles> {
     history: History;
     hosts: string;
+    typeId: number;
+    typeName: string;
 }
 
 class ArticleType extends React.Component<Props, State> {
@@ -75,6 +81,8 @@ class ArticleType extends React.Component<Props, State> {
             open: false,
             errorMessage: '',
             error: false,
+            typeId: 1,
+            typeName: '',
         };
     }
     componentDidMount() {
@@ -197,6 +205,20 @@ class ArticleType extends React.Component<Props, State> {
                 nodeLength: _length,
             });
         };
+        const handleClickLook = (pro: any) => {
+            this.setState({
+                typeId: pro.node.id,
+                typeName: pro.node.title,
+            });
+            const data = {
+                typeId: pro.node.id,
+                typeName: pro.node.title,
+            };
+            this.props.history.push({
+                pathname: '/cms/article',
+                state: data,
+            });
+        };
         return (
             <div>
                 <div className="top-action-module clearfix">
@@ -232,6 +254,13 @@ class ArticleType extends React.Component<Props, State> {
                             rowHeight={40}
                             generateNodeProps={(rowInfo) => ({
                                 buttons: [
+                                    <IconButton
+                                        key={rowInfo.node.id}
+                                        onClick={() => handleClickLook(rowInfo)}
+                                        title="查看"
+                                    >
+                                        <Visibility />
+                                    </IconButton>,
                                     <IconButton
                                         key={rowInfo.node.id}
                                         title="编辑"
