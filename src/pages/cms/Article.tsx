@@ -192,7 +192,120 @@ class Article extends React.Component<Props, State> {
         };
     }
     componentDidMount() {
-        if (this.state.classifyId !== 1) {
+        let page;
+        if (localStorage.getItem('currentPage')) {
+            page = localStorage.getItem('currentPage');
+        } else {
+            page = 1;
+        }
+        if (localStorage.getItem('articleType')) {
+            const type = localStorage.getItem('articleType');
+            if (type) {
+                const ty = JSON.parse(type);
+                let param = false;
+                if (ty.topPlace === '2') {
+                    param = false;
+                } else if (ty.topPlace === '1') {
+                    param = true;
+                }
+                if (ty.topPlace === '0') {
+                    axios.post(`${this.props.hosts}graphql?`, {
+                        query: `
+                    query {
+                        getArticlesLimit(serachArticle: {
+                            limitNum: 10,
+                            pages: ${page},
+                            keyWords: "${ty.keyword}",
+                            classifyId: ${ty.classifyId},
+                        }){
+                            pagination{
+                                totalItems,
+                                currentPage,
+                                pageSize,
+                                totalPages,
+                                startPage,
+                                endPage,
+                                startIndex,
+                                endIndex,
+                                pages,
+                            },
+                            articles{
+                                id,
+                                check,
+                                name,
+                                classify,
+                                publishedTime,
+                            }
+                        }
+                    }
+                `,
+                    }).then(response => {
+                        if (!response.data.errors) {
+                            const data = response.data.data.getArticlesLimit;
+                            this.setState({
+                                list: data.articles,
+                                totalItems: data.pagination.totalItems,
+                                rowsPerPage: data.pagination.pageSize,
+                                currentPage: data.pagination.currentPage - 1,
+                                right: true,
+                                keyword: ty.keyword,
+                                classify: ty.classify,
+                                classifyId: ty.classifyId,
+                                isTop: ty.topPlace,
+                            });
+                        }
+                    });
+                } else {
+                    axios.post(`${this.props.hosts}graphql?`, {
+                        query: `
+                    query {
+                        getArticlesLimit(serachArticle: {
+                            limitNum: 10,
+                            pages: ${page},
+                            keyWords: "${ty.keyword}",
+                            classifyId: ${ty.classifyId},
+                            topPlace: ${param},
+                        }){
+                            pagination{
+                                totalItems,
+                                currentPage,
+                                pageSize,
+                                totalPages,
+                                startPage,
+                                endPage,
+                                startIndex,
+                                endIndex,
+                                pages,
+                            },
+                            articles{
+                                id,
+                                check,
+                                name,
+                                classify,
+                                publishedTime,
+                            }
+                        }
+                    }
+                `,
+                    }).then(response => {
+                        if (!response.data.errors) {
+                            const data = response.data.data.getArticlesLimit;
+                            this.setState({
+                                list: data.articles,
+                                totalItems: data.pagination.totalItems,
+                                rowsPerPage: data.pagination.pageSize,
+                                currentPage: data.pagination.currentPage - 1,
+                                right: true,
+                                keyword: ty.keyword,
+                                classify: ty.classify,
+                                classifyId: ty.classifyId,
+                                isTop: ty.topPlace,
+                            });
+                        }
+                    });
+                }
+            }
+        } else if (this.state.classifyId !== 1) {
             axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     query {
@@ -642,6 +755,13 @@ class Article extends React.Component<Props, State> {
                 }
             });
         }
+        // const typeData = {
+        //     classify: this.state.classify,
+        //     classifyId: this.state.classifyId,
+        //     keyword: this.state.keyword,
+        //     topPlace: this.state.isTop,
+        // };
+        // localStorage.setItem('articleType', JSON.stringify(typeData));
     };
     handlePageClick = (data: any) => {
         let param = false;
@@ -779,6 +899,7 @@ class Article extends React.Component<Props, State> {
                 }
             });
         }
+        // localStorage.setItem('currentPage', data.selected + 1);
     };
     handleChangeType = (value: any, select: any) => {
         this.setState({
@@ -880,7 +1001,7 @@ class Article extends React.Component<Props, State> {
                                                     {n.classify}
                                                 </TableCell>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
-                                                    {n.publishedTime}
+                                                    {new Date(n.publishedTime).toLocaleDateString()}
                                                 </TableCell>
                                                 <TableCell className="table-action-btn" numeric>
                                                     <Link to={'/cms/article/edit/' + n.id}>

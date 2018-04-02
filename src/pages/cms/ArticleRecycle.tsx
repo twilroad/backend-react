@@ -503,7 +503,7 @@ class ArticleRecycle extends React.Component<Props, State> {
                                                     {n.classify}
                                                 </TableCell>
                                                 <TableCell className={this.props.classes.tableCell} numeric>
-                                                    {n.publishedTime}
+                                                    {new Date(n.publishedTime).toLocaleDateString()}
                                                 </TableCell>
                                                 <TableCell className="table-action-btn" numeric>
                                                     <IconButton
