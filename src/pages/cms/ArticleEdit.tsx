@@ -389,7 +389,7 @@ class ArticleEdit extends React.Component<Props, State> {
                             activityAddress: "${self.state.activityAddress}"
                             source: "${self.state.source}",
                             sourceUrl: "${self.state.sourceUrl}",
-                            pictureUrl: "https://${pictureStr}",
+                            pictureUrl: "${pictureStr}",
                             bucketName: "${self.state.bucketName}",
                             pictureName: "${self.state.pictureName}",
                             type: "${self.state.type}",
@@ -441,7 +441,7 @@ class ArticleEdit extends React.Component<Props, State> {
                              activityAddress: "${self.state.activityAddress}"
                              source: "${self.state.source}",
                              sourceUrl: "${self.state.sourceUrl}",
-                             pictureUrl: "https://${pictureStr}",
+                             pictureUrl: "${pictureStr}",
                              bucketName: "${self.state.bucketName}",
                              pictureName: "${self.state.pictureName}",
                              type: "${self.state.type}",

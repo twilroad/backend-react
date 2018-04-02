@@ -120,8 +120,8 @@ type State = {
     isTops: Array<any>,
     options: any,
     current: number,
-    classify: string,
-    classifyId: number,
+    classify: any,
+    classifyId: any,
     loading: boolean,
     tipOpen: boolean,
     transition: any,
@@ -132,11 +132,19 @@ type State = {
 
 interface Props extends WithStyles<keyof typeof styles> {
     hosts: string;
+    typeId: number;
+    typeName: string;
 }
 
 class Article extends React.Component<Props, State> {
     constructor(props: any, state: any) {
         super(props, state);
+        let typeId = '';
+        let typeName = '';
+        if (props.location.state) {
+            typeId = props.location.state.typeId;
+            typeName = props.location.state.typeName;
+        }
         this.state = {
             right: false,
             checkedAll: false,
@@ -171,61 +179,10 @@ class Article extends React.Component<Props, State> {
                 },
             ],
             keyword: '',
-            options: [
-                {
-                    value: '110000',
-                    label: '北京',
-                    children: [
-                        {
-                            value: '110000',
-                            label: '北京市',
-                            children: [
-                                {
-                                    value: '110101',
-                                    label: '东城区'
-                                },
-                                {
-                                    value: '110102',
-                                    label: '西城区'
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    value: '130000',
-                    label: '河北省',
-                    children: [
-                        {
-                            value: '130100',
-                            label: '石家庄市',
-                            children: [
-                                {
-                                    value: '130102',
-                                    label: '长安区'
-                                },
-                                {
-                                    value: '130104',
-                                    label: '桥西区'
-                                },
-                            ],
-                        },
-                        {
-                            value: '130200',
-                            label: '唐山市',
-                            children: [
-                                {
-                                    value: '130202',
-                                    label: '路南区',
-                                },
-                            ],
-                        },
-                    ],
-                },
-            ],
+            options: [],
             current: 1,
-            classify: '',
-            classifyId: 1,
+            classify: typeName ? typeName : '',
+            classifyId: typeId ? typeId : 1,
             loading: false,
             transition: undefined,
             tipOpen: false,
@@ -235,45 +192,90 @@ class Article extends React.Component<Props, State> {
         };
     }
     componentDidMount() {
-        axios.post(`${this.props.hosts}graphql?`, {
-            query: `
-                query {
-                    getArticlesLimit(getArticleAll: {
-                        limitNum: 10,
-                        pages: 1,
-                    }){
-                        pagination{
-                            totalItems,
-                            currentPage,
-                            pageSize,
-                            totalPages,
-                            startPage,
-                            endPage,
-                            startIndex,
-                            endIndex,
-                            pages,
-                        },
-                        articles{
-                            id,
-                            check,
-                            name,
-                            classify,
-                            publishedTime,
+        if (this.state.classifyId !== 1) {
+            axios.post(`${this.props.hosts}graphql?`, {
+                query: `
+                    query {
+                        getArticlesLimit(serachArticle: {
+                            limitNum: 10,
+                            pages: 1,
+                            keyWords: "",
+                            classifyId: ${this.state.classifyId},
+                        }){
+                            pagination{
+                                totalItems,
+                                currentPage,
+                                pageSize,
+                                totalPages,
+                                startPage,
+                                endPage,
+                                startIndex,
+                                endIndex,
+                                pages,
+                            },
+                            articles{
+                                id,
+                                check,
+                                name,
+                                classify,
+                                publishedTime,
+                            }
                         }
                     }
+                `,
+            }).then(response => {
+                if (!response.data.errors) {
+                    const data = response.data.data.getArticlesLimit;
+                    this.setState({
+                        list: data.articles,
+                        totalItems: data.pagination.totalItems,
+                        rowsPerPage: data.pagination.pageSize,
+                        currentPage: data.pagination.currentPage - 1,
+                        right: true,
+                    });
                 }
-            `,
-        }).then(response => {
-            if (!response.data.errors) {
-                const data = response.data.data.getArticlesLimit;
-                this.setState({
-                    list: data.articles,
-                    totalItems: data.pagination.totalItems,
-                    rowsPerPage: data.pagination.pageSize,
-                    currentPage: data.pagination.currentPage - 1,
-                });
-            }
-        });
+            });
+        } else {
+            axios.post(`${this.props.hosts}graphql?`, {
+                query: `
+                    query {
+                        getArticlesLimit(getArticleAll: {
+                            limitNum: 10,
+                            pages: 1,
+                        }){
+                            pagination{
+                                totalItems,
+                                currentPage,
+                                pageSize,
+                                totalPages,
+                                startPage,
+                                endPage,
+                                startIndex,
+                                endIndex,
+                                pages,
+                            },
+                            articles{
+                                id,
+                                check,
+                                name,
+                                classify,
+                                publishedTime,
+                            }
+                        }
+                    }
+                `,
+            }).then(response => {
+                if (!response.data.errors) {
+                    const data = response.data.data.getArticlesLimit;
+                    this.setState({
+                        list: data.articles,
+                        totalItems: data.pagination.totalItems,
+                        rowsPerPage: data.pagination.pageSize,
+                        currentPage: data.pagination.currentPage - 1,
+                    });
+                }
+            });
+        }
         axios.post(`${this.props.hosts}graphql?`, {
             query: `
                 query {
@@ -648,7 +650,7 @@ class Article extends React.Component<Props, State> {
         } else if (this.state.isTop === '1') {
             param = true;
         }
-        if (this.state.pageStatus && this.state.isTop === '0') {
+        if ((this.state.pageStatus && this.state.isTop === '0') || this.state.classifyId !== 1) {
             axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                 query {
