@@ -1,7 +1,7 @@
 /*!
  * neditor parse
  * version: 2.0.0
- * build: Thu Oct 19 2017 18:57:37 GMT+0800 (中国标准时间)
+ * build: Wed Apr 11 2018 10:39:26 GMT+0800 (CST)
  */
 
 (function(){
@@ -965,7 +965,7 @@ UE.parse.register("list", function(utils) {
     };
 
   utils.extend(this, {
-    liiconpath: "http://bs.baidu.com/listicon/",
+    liiconpath : utils.removeLastbs(this.rootPath) + '/themes/ueditor-list/',
     listDefaultPaddingLeft: "20"
   });
 

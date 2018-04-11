@@ -12,12 +12,97 @@
         onlineImage,
         searchImage;
 
+
     window.onload = function () {
         initTabs();
         initAlign();
         initButtons();
     };
+    var updateImages = [];
+    $('#fileList').on('click', 'span', function() {
+        updateImages.splice($(this).parent().index() - 1, 1);
+        $(this).parent().remove();
+    });
+    $('#inputFile').on('change', function(event) {
+        var fileReader = new FileReader(),
+            blobSlice = File.prototype.mozSlice || File.prototype.webkitSlice || File.prototype.slice,
+            file = document.getElementById("inputFile").files[0],
+            chunkSize = 2097152,
+            chunks = Math.ceil(file.size / chunkSize),
+            // read in chunks of 2MB
+            currentChunk = 0,
+            spark = new SparkMD5();
+        fileReader.onload = function(e) {
+            spark.appendBinary(e.target.result); // append binary string
+            currentChunk++;
 
+            if (currentChunk < chunks) {
+                loadNext();
+            } else {
+                $.post('https://apps.029inno.com/graphql?', {
+                    query: `
+                        mutation {
+                            uploadProcess(
+                                bucketName: "chuangyedajie-src",
+                                md5: "${spark.end()}",
+                                contentName: "${event.target.value.substr(12)}",
+                                contentSecret: "",
+                                tags: "",
+                            ){
+                                code,
+                                message,
+                                url,
+                                method,
+                                baseUrl,
+                                form {
+                                    policy,
+                                    authorization,
+                                },
+                            }
+                        }
+                    `,
+                }, function(result) {
+                    if (result.data.uploadProcess.code === 200) {
+                        const res = result.data.uploadProcess.form;
+                        const imgUrl = `https://${result.data.uploadProcess.baseUrl}`;
+                        var formData = new FormData(document.querySelector("form"));
+                        formData.append('policy', res.policy);
+                        formData.append('authorization', res.authorization);
+                        formData.append('file', document.getElementById("inputFile").files[0].name);
+                        $.ajax({
+                            url: `${result.data.uploadProcess.url}`,
+                            type: "POST",
+                            data: formData,
+                            processData: false,  // 不处理数据
+                            contentType: false,   // 不设置内容类型
+                            success: function (result) {
+                                var result = JSON.parse(result);
+                                if (result.code === 200) {
+                                    var src = imgUrl.replace('/upload', '') + result.url;
+                                    updateImages.push({
+                                        alt: file.name,
+                                        src: imgUrl.replace('/upload', '') + result.url,
+                                        _src: imgUrl.replace('/upload', '') + result.url,
+                                        floatStyle: "",
+                                    });
+                                    $('#fileList').append("<div><img src="+src+" alt="+file.name+"><span></span></div>");
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        };
+
+        function loadNext() {
+            var start = currentChunk * chunkSize,
+                end = start + chunkSize >= file.size ? file.size : start + chunkSize;
+
+            fileReader.readAsBinaryString(blobSlice.call(file, start, end));
+        };
+
+        loadNext();
+    });
     /* 初始化tab标签 */
     function initTabs() {
         var tabs = $G('tabhead').children;
@@ -87,12 +172,16 @@
                     list = remoteImage.getInsertList();
                     break;
                 case 'upload':
-                    list = uploadImage.getInsertList();
-                    var count = uploadImage.getQueueCount();
-                    if (count) {
-                        $('.info', '#queueList').html('<span style="color:red;">' + '还有2个未上传文件'.replace(/[\d]/, count) + '</span>');
-                        return false;
-                    }
+                    updateImages.forEach(item => {
+                        item.floatStyle = getAlign();
+                    });
+                    list = updateImages;
+                    // list = uploadImage.getInsertList();
+                    // var count = uploadImage.getQueueCount(); // 未上传图片数量
+                    // if (count) {
+                    //     $('.info', '#queueList').html('<span style="color:red;">' + '还有2个未上传文件'.replace(/[\d]/, count) + '</span>');
+                    //     return false;
+                    // }
                     break;
                 case 'online':
                     list = onlineImage.getInsertList();
@@ -102,7 +191,6 @@
                     remote = true;
                     break;
             }
-
             if(list) {
                 editor.execCommand('insertimage', list);
                 remote && editor.fireEvent("catchRemoteImage");
@@ -759,6 +847,7 @@
             updateTotalProgress();
         },
         getQueueCount: function () {
+            window.console.log(this.uploader);
             var file, i, status, readyFile = 0, files = this.uploader.getFiles();
             for (i = 0; file = files[i++]; ) {
                 status = file.getStatus();

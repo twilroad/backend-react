@@ -1,7 +1,7 @@
 /*!
  * neditor
  * version: 2.0.0
- * build: Thu Oct 19 2017 18:57:36 GMT+0800 (中国标准时间)
+ * build: Wed Apr 11 2018 10:39:26 GMT+0800 (CST)
  */
 
 (function(){
@@ -1997,6 +1997,7 @@ var dtd = (dom.dtd = (function() {
       img: 1,
       embed: 1,
       input: 1,
+      textarea: 1,
       link: 1,
       meta: 1,
       param: 1,
@@ -2953,27 +2954,29 @@ var domUtils = (dom.domUtils = {
     if (k)
       while (k--) {
         type = types[k];
-        if (element.addEventListener) {
-          element.addEventListener(type, handler, false);
-        } else {
-          if (!handler._d) {
-            handler._d = {
-              els: []
-            };
-          }
-          var key = type + handler.toString(),
-            index = utils.indexOf(handler._d.els, element);
-          if (!handler._d[key] || index == -1) {
-            if (index == -1) {
-              handler._d.els.push(element);
-            }
-            if (!handler._d[key]) {
-              handler._d[key] = function(evt) {
-                return handler.call(evt.srcElement, evt || window.event);
+        if (element !== null) {
+          if (element.addEventListener) {
+            element.addEventListener(type, handler, false);
+          } else {
+            if (!handler._d) {
+              handler._d = {
+                els: []
               };
             }
+            var key = type + handler.toString(),
+              index = utils.indexOf(handler._d.els, element);
+            if (!handler._d[key] || index == -1) {
+              if (index == -1) {
+                handler._d.els.push(element);
+              }
+              if (!handler._d[key]) {
+                handler._d[key] = function(evt) {
+                  return handler.call(evt.srcElement, evt || window.event);
+                };
+              }
 
-            element.attachEvent("on" + type, handler._d[key]);
+              element.attachEvent("on" + type, handler._d[key]);
+            }
           }
         }
       }
@@ -3012,22 +3015,24 @@ var domUtils = (dom.domUtils = {
     if (k)
       while (k--) {
         type = types[k];
-        if (element.removeEventListener) {
-          element.removeEventListener(type, handler, false);
-        } else {
-          var key = type + handler.toString();
-          try {
-            element.detachEvent(
-              "on" + type,
-              handler._d ? handler._d[key] : handler
-            );
-          } catch (e) {}
-          if (handler._d && handler._d[key]) {
-            var index = utils.indexOf(handler._d.els, element);
-            if (index != -1) {
-              handler._d.els.splice(index, 1);
+        if (element !== null) {
+          if (element.removeEventListener) {
+            element.removeEventListener(type, handler, false);
+          } else {
+            var key = type + handler.toString();
+            try {
+              element.detachEvent(
+                "on" + type,
+                handler._d ? handler._d[key] : handler
+              );
+            } catch (e) {}
+            if (handler._d && handler._d[key]) {
+              var index = utils.indexOf(handler._d.els, element);
+              if (index != -1) {
+                handler._d.els.splice(index, 1);
+              }
+              handler._d.els.length == 0 && delete handler._d[key];
             }
-            handler._d.els.length == 0 && delete handler._d[key];
           }
         }
       }
@@ -7433,6 +7438,37 @@ var fillCharReg = new RegExp(domUtils.fillChar, "g");
         me.isReady ? fn.apply(me) : me.addListener("ready", fn);
       }
     },
+    /**
+       * 该方法用于设置placeholder
+       * @method setPlaceholder
+       * @param { String } placeholder 编辑器的placeholder文案
+       * @example
+       * ```javascript
+       * editor.setPlaceholder('请输入内容');
+       * ```
+       */
+      setPlaceholder: function(){
+
+          function contentChange(){
+              var localHtml = this.getPlainTxt();
+              if(!localHtml.trim()){
+                  UE.dom.domUtils.addClass( this.body, 'empty' );
+              }else{
+                  UE.dom.domUtils.removeClasses( this.body, 'empty' );
+              }
+          }
+
+          return function(placeholder){
+              var _editor = this;
+
+              _editor.ready(function () {
+                  contentChange.call(_editor);
+                  _editor.body.setAttribute('placeholder', placeholder);
+              });
+              _editor.removeListener('keyup contentchange', contentChange);
+              _editor.addListener('keyup contentchange', contentChange);
+          }
+      }(),
 
     /**
          * 该方法是提供给插件里面使用，设置配置项默认值
@@ -7571,6 +7607,8 @@ var fillCharReg = new RegExp(domUtils.fillChar, "g");
           //设置默认字体和字号
           //font-family不能呢随便改，在safari下fillchar会有解析问题
           "body{margin:8px;font-family:sans-serif;font-size:16px;}" +
+          //设置placeholder
+          "body.empty:before{content:attr(placeholder);position:absolute;color:#999;}"+
           //设置段落间距
           "p{margin:5px 0;}</style>" +
           (options.iframeCssUrl
@@ -8344,9 +8382,9 @@ var fillCharReg = new RegExp(domUtils.fillChar, "g");
          */
     execCommand: function(cmdName) {
       cmdName = cmdName.toLowerCase();
-      var me = this,
-        result,
-        cmd = me.commands[cmdName] || UE.commands[cmdName];
+      var me = this;
+      var result;
+      var cmd = me.commands[cmdName] || UE.commands[cmdName];
       if (!cmd || !cmd.execCommand) {
         return null;
       }
@@ -8833,54 +8871,54 @@ UE.Editor.defaultOptions = function(editor) {
 // core/loadconfig.js
 ;(function() {
   UE.Editor.prototype.loadServerConfig = function() {
-    var me = this;
-    setTimeout(function() {
-      try {
-        me.options.imageUrl &&
-          me.setOpt(
-            "serverUrl",
-            me.options.imageUrl.replace(
-              /^(.*[\/]).+([\.].+)$/,
-              "$1controller$2"
-            )
-          );
-
-        var configUrl = me.getActionUrl("config"),
-          isJsonp = utils.isCrossDomainUrl(configUrl);
-
-        /* 发出ajax请求 */
-        me._serverConfigLoaded = false;
-
-        configUrl &&
-          UE.ajax.request(configUrl, {
-            method: "GET",
-            dataType: isJsonp ? "jsonp" : "",
-            onsuccess: function(r) {
-              try {
-                var config = isJsonp ? r : eval("(" + r.responseText + ")");
-                utils.extend(me.options, config);
-                me.fireEvent("serverConfigLoaded");
-                me._serverConfigLoaded = true;
-              } catch (e) {
-                showErrorMsg(me.getLang("loadconfigFormatError"));
-              }
-            },
-            onerror: function() {
-              showErrorMsg(me.getLang("loadconfigHttpError"));
-            }
-          });
-      } catch (e) {
-        showErrorMsg(me.getLang("loadconfigError"));
-      }
-    });
-
-    function showErrorMsg(msg) {
-      console && console.error(msg);
-      //me.fireEvent('showMessage', {
-      //    'title': msg,
-      //    'type': 'error'
-      //});
-    }
+    // var me = this;
+    // setTimeout(function() {
+    //   try {
+    //     me.options.imageUrl &&
+    //       me.setOpt(
+    //         "serverUrl",
+    //         me.options.imageUrl.replace(
+    //           /^(.*[\/]).+([\.].+)$/,
+    //           "$1controller$2"
+    //         )
+    //       );
+    //
+    //     var configUrl = me.getActionUrl("config"),
+    //       isJsonp = utils.isCrossDomainUrl(configUrl);
+    //
+    //     /* 发出ajax请求 */
+    //     me._serverConfigLoaded = false;
+    //
+    //     configUrl &&
+    //       UE.ajax.request(configUrl, {
+    //         method: "GET",
+    //         dataType: isJsonp ? "jsonp" : "",
+    //         onsuccess: function(r) {
+    //           try {
+    //             var config = isJsonp ? r : eval("(" + r.responseText + ")");
+    //             utils.extend(me.options, config);
+    //             me.fireEvent("serverConfigLoaded");
+    //             me._serverConfigLoaded = true;
+    //           } catch (e) {
+    //             showErrorMsg(me.getLang("loadconfigFormatError"));
+    //           }
+    //         },
+    //         onerror: function() {
+    //           showErrorMsg(me.getLang("loadconfigHttpError"));
+    //         }
+    //       });
+    //   } catch (e) {
+    //     showErrorMsg(me.getLang("loadconfigError"));
+    //   }
+    // });
+    //
+    // function showErrorMsg(msg) {
+    //   console && console.error(msg);
+    //   //me.fireEvent('showMessage', {
+    //   //    'title': msg,
+    //   //    'type': 'error'
+    //   //});
+    // }
   };
 
   UE.Editor.prototype.isServerConfigLoaded = function() {
@@ -12007,7 +12045,7 @@ UE.commands["imagefloat"] = {
             break;
           case "center":
             if (me.queryCommandValue("imagefloat") != "center") {
-              pN = img.parentNode;
+              var pN = img.parentNode;
               domUtils.setStyle(img, "float", "");
               domUtils.removeAttributes(img, "align");
               tmpNode = img;
@@ -12028,13 +12066,13 @@ UE.commands["imagefloat"] = {
 
               me.execCommand(
                 "insertHtml",
-                '<p id="_img_parent_tmp" style="text-align:center">' +
+                '<p class="_img_parent_tmp" style="text-align:center">' +
                   pN.innerHTML +
                   "</p>"
               );
 
-              tmpNode = me.document.getElementById("_img_parent_tmp");
-              tmpNode.removeAttribute("id");
+              tmpNode = me.document.getElementsByClassName("_img_parent_tmp")[0];
+              tmpNode.removeAttribute("class");
               tmpNode = tmpNode.firstChild;
               range.selectNode(tmpNode).select();
               //去掉后边多余的元素
@@ -12542,28 +12580,35 @@ UE.plugins["font"] = function() {
     if (needSetChild[cmdName]) {
       rng.adjustmentBoundary();
       if (!rng.collapsed && rng.startContainer.nodeType == 1) {
-        var start = rng.startContainer.childNodes[rng.startOffset];
-        if (start && domUtils.isTagNode(start, "span")) {
-          var bk = rng.createBookmark();
-          utils.each(domUtils.getElementsByTagName(start, "span"), function(
-            span
-          ) {
-            if (!span.parentNode || domUtils.isBookmarkNode(span)) return;
-            if (
-              cmdName == "backcolor" &&
-              domUtils
-                .getComputedStyle(span, "background-color")
-                .toLowerCase() === value
+        rng.traversal(function(node){
+          var start;
+          if(domUtils.isTagNode(node,'span')){
+            start = node;
+          }else{
+            start = domUtils.getElementsByTagName(node,'span')[0];
+          }
+          if (start && domUtils.isTagNode(start, "span")) {
+            var bk = rng.createBookmark();
+            utils.each(domUtils.getElementsByTagName(start, "span"), function(
+              span
             ) {
-              return;
-            }
-            domUtils.removeStyle(span, needSetChild[cmdName]);
-            if (span.style.cssText.replace(/^\s+$/, "").length == 0) {
-              domUtils.remove(span, true);
-            }
-          });
-          rng.moveToBookmark(bk);
+              if (!span.parentNode || domUtils.isBookmarkNode(span)) return;
+              if (
+                cmdName == "backcolor" &&
+                domUtils
+                  .getComputedStyle(span, "background-color")
+                  .toLowerCase() === value
+              ) {
+                return;
+              }
+              domUtils.removeStyle(span, needSetChild[cmdName]);
+              if (span.style.cssText.replace(/^\s+$/, "").length == 0) {
+                domUtils.remove(span, true);
+              }
+            });
+            rng.moveToBookmark(bk);
         }
+        });
       }
     }
   }
@@ -19426,6 +19471,9 @@ UE.plugins["autofloat"] = function() {
   me.addListener("destroy", function() {
     domUtils.un(window, ["scroll", "resize"], updateFloating);
     me.removeListener("keydown", defer_updateFloating);
+    //适用于在DIV scrollbox中滚动，但页面不滚动的浮动toolbar
+    var scrollBox = document.getElementById("scrollBox");
+    domUtils.un(scrollBox, ['scroll','resize'], updateFloating);
   });
 
   me.addListener("ready", function() {
@@ -19444,7 +19492,9 @@ UE.plugins["autofloat"] = function() {
       }
       domUtils.on(window, ["scroll", "resize"], updateFloating);
       me.addListener("keydown", defer_updateFloating);
-
+      //适用于在DIV scrollbox中滚动，但页面不滚动的浮动toolbar
+      var scrollBox = document.getElementById("scrollBox");
+      domUtils.on(scrollBox, ['scroll','resize'], updateFloating);
       me.addListener("beforefullscreenchange", function(t, enabled) {
         if (enabled) {
           unsetFloating();

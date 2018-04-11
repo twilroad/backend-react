@@ -115,7 +115,6 @@
     height:10px;
 }
 #remote .row{
-    /*margin-left: 20px;*/
     display: flex;
     clear: both;
     height: 30px;
@@ -258,22 +257,19 @@
 }
 
 .element-invisible {
-    width: 0 !important;
-    height: 0 !important;
     border: 0;
     padding: 0;
     margin: 0;
     overflow: hidden;
-    position: absolute !important;
     clip: rect(1px, 1px, 1px, 1px);
 }
 
 #upload .placeholder {
+    display: none;
     margin: 10px;
     height: 212px;
     padding-top: 160px;
     text-align: center;
-    /*background: url(./images/image.png) center 130px no-repeat #f3f3f3;*/
     background-color: #f3f3f3;
     color: #cccccc;
     font-size: 18px;
@@ -291,7 +287,6 @@
     display: inline-block;
     margin: 0 auto 20px auto;
     cursor: pointer;
-    /* box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1); */
     border: 1px solid #ccc;
 }
 
@@ -491,13 +486,50 @@
     z-index: 200;
     background: url(../fonts/images/selected.svg) no-repeat right bottom;
 }
-
-#upload .filelist li.filePickerBlock {
+#fileList {
+    padding: 10px;
+    margin: 0 -9px;
+}
+#fileList div,
+#upload .filePickerBlock {
+    position: relative;
     width: 135px;
     height: 135px;
-    background: url(../fonts/images/addfile.svg) no-repeat center;
+    display: inline-block;
+    float: left;
+    margin: 6px;
     border: 1px solid #eeeeee;
+}
+#upload .filePickerBlock {
+    background: url(../fonts/images/addfile.svg) no-repeat center;
     border-radius: 0;
+}
+#fileList > div > img {
+    width: 100%;
+    height: 100%;
+}
+#fileList > div > span{
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    display: none;
+    background: rgba(0, 0, 0, 0.6) url(./images/icons.png) no-repeat;
+    background-position: -44px -21px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+}
+#fileList div:hover span{
+    display: block;
+    cursor: pointer;
+}
+#upload  .filePickerBlock input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
 }
 #upload .filelist li.filePickerBlock div.webuploader-pick  {
     width: 100%;

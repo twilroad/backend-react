@@ -22,7 +22,7 @@
         <div id="tabhead" class="tabhead">
             <span class="tab" data-content-id="remote"><var id="lang_tab_remote"></var></span>
             <span class="tab focus" data-content-id="upload"><var id="lang_tab_upload"></var></span>
-            <span class="tab" data-content-id="online"><var id="lang_tab_online"></var></span>
+            <!--<span class="tab" data-content-id="online"><var id="lang_tab_online"></var></span>-->
             <!--<span class="tab" data-content-id="search"><var id="lang_tab_search"></var></span>-->
         </div>
         <div class="alignBar">
@@ -80,7 +80,7 @@
                         </div><div class="info"></div>
                         <div class="btns">
                             <div id="filePickerBtn"></div>
-                            <div class="uploadBtn"><var id="lang_start_upload"></var></div>
+                            <!--<div class="uploadBtn"><var id="lang_start_upload"></var></div>-->
                         </div>
                     </div>
                     <div id="dndArea" class="placeholder">
@@ -88,9 +88,14 @@
                             <div id="filePickerReady"></div>
                         </div>
                     </div>
-                    <ul class="filelist element-invisible">
-                        <li id="filePickerBlock" class="filePickerBlock"></li>
-                    </ul>
+                    <form action="" method="post" name="fileinfo" id="fileList">
+                        <label id="filePickerBlock" class="filePickerBlock">
+                            <input type="file"
+                                   name="file"
+                                   id="inputFile"
+                            >
+                        </label>
+                    </form>
                 </div>
             </div>
 
@@ -118,6 +123,6 @@
         </div>
     </div>
     <script type="text/javascript" src="image.js"></script>
-
+    <script type="text/javascript" src="spark-md5.js"></script>
 </body>
 </html>

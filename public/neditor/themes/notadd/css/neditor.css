@@ -167,10 +167,6 @@ div.edui-box {
     background-color: #f3f3f3;
 }
 
-.edui-notadd .edui-editor-toolbarboxinner {
-    /*padding: 2px;*/
-}
-
 .edui-notadd .edui-editor-iframeholder .view p {
     overflow: hidden;
 }
@@ -221,7 +217,6 @@ div.edui-box {
 
 .edui-notadd .edui-editor-breadcrumb span {
     cursor: pointer;
-    /*text-decoration: underline;*/
     color: blue;
 }
 
@@ -235,13 +230,6 @@ div.edui-box {
     padding: 10px;
     font-size: 10pt;
     font-family: "宋体";
-}
-
-.edui-notadd .edui-bubble .edui-shadow {
-    /*box-shadow: 1px 1px 3px #818181;*/
-    /*-webkit-box-shadow: 2px 2px 3px #818181;*/
-    /*-moz-box-shadow: 2px 2px 3px #818181;*/
-    /*filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius = '2', MakeShadow = 'true', ShadowOpacity = '0.5');*/
 }
 
 .edui-notadd .edui-editor-toolbarmsg {
@@ -289,12 +277,6 @@ div.edui-box {
     overflow: hidden;
 }
 
-#edui1_imagescale_cover {
-
-}
-.edui-notadd  .edui-editor-imagescale {
-
-}
 /*可选中菜单按钮*/
 .edui-notadd .edui-list .edui-bordereraser {
     display: none;
@@ -428,7 +410,6 @@ div.edui-box {
 
 .edui-notadd .edui-toolbar .edui-combox-body .edui-arrow::after {
     height: 25px;
-
     font-family:"edui-notadd" !important;
     font-size: 26px;
     font-style:normal;
@@ -436,7 +417,6 @@ div.edui-box {
     -moz-osx-font-smoothing: grayscale;
 
     content: "\e64f";
-    /*padding: 10px 0;*/
     display: block;
 }
 
@@ -1283,35 +1263,14 @@ div.edui-box {
     font-style:normal;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-
     content: "\e64f";
     display: block;
     position: relative;
     right: 5px;
 }
 
-.edui-notadd .edui-toolbar .edui-splitbutton .edui-splitbutton-body,
-.edui-notadd .edui-toolbar .edui-menubutton .edui-menubutton-body {
-    /*padding: 1px;*/
-}
-
 .edui-notadd .edui-toolbar .edui-splitborder {
     height: 20px;
-}
-
-.edui-notadd .edui-toolbar .edui-state-hover .edui-splitborder {
-    /*width: 1px;*/
-    /*border-left: 0px solid #dcac6c;*/
-}
-
-.edui-notadd .edui-toolbar .edui-state-active .edui-splitborder {
-    /*width: 0;*/
-    /*border-left: 1px solid gray;*/
-}
-
-.edui-notadd .edui-toolbar .edui-state-opened .edui-splitborder {
-    /*width: 1px;*/
-    /*border: 0;*/
 }
 
 .edui-notadd .edui-toolbar .edui-splitbutton .edui-state-checked .edui-icon,
@@ -1322,7 +1281,6 @@ div.edui-box {
 .edui-notadd .edui-toolbar .edui-splitbutton .edui-state-hover .edui-splitbutton-body,
 .edui-notadd .edui-toolbar .edui-menubutton .edui-state-hover .edui-menubutton-body {
     background-color: #e5e5e5;
-    /*border: 1px solid #dcac6c;*/
     padding: 0;
 }
 
@@ -1375,7 +1333,6 @@ div.edui-box {
     z-index: 3000;
     width:auto;
     height:auto;
-
 }
 
 .edui-notadd .edui-popup .edui-shadow {
@@ -1601,11 +1558,6 @@ div.edui-box {
     height: 20px;
     width: 20px;
     cursor: pointer;
-    /*background: url("../images/icons-all.gif") no-repeat 0 -59px;*/
-}
-
-.edui-notadd .edui-dialog-closebutton .edui-state-hover .edui-button-body {
-    /*background: url("../images/icons-all.gif") no-repeat 0 -89px;*/
 }
 
 .edui-notadd .edui-dialog-foot {
@@ -1663,7 +1615,6 @@ div.edui-box {
 
 .edui-notadd .edui-dialog-dragmask {
     position: absolute;
-    /*z-index: 2001;*/
     background-color: transparent;
     cursor: move;
 }
@@ -1929,12 +1880,11 @@ div.edui-box {
 .edui-notadd .edui-for-inserttable .edui-splitborder {
     display: none
 }
+
 .edui-notadd .edui-for-inserttable  .edui-splitbutton-body .edui-arrow {
     width: 0
 }
-.edui-notadd .edui-toolbar .edui-for-inserttable  .edui-state-active .edui-splitborder{
-    /*border-left: 1px solid transparent;*/
-}
+
 .edui-notadd .edui-tablepicker .edui-infoarea {
     height: 14px;
     line-height: 14px;
@@ -2191,7 +2141,7 @@ div.edui-box {
     position: absolute;
     overflow: hidden;
     bottom: 5px;
-    left: 9px;
+    left: 8px;
     width: 18px;
     height: 4px;
 }
@@ -2219,10 +2169,6 @@ div.edui-box {
 .edui-notadd .edui-for-emotion .edui-splitbutton-body .edui-arrow
 {
     width: 0
-}
-.edui-notadd .edui-toolbar .edui-for-emotion  .edui-state-active .edui-splitborder
-{
-    /*border-left: 1px solid transparent;*/
 }
 /*contextmenu*/
 .edui-notadd .edui-hassubmenu .edui-arrow {
@@ -2352,4 +2298,9 @@ div.edui-box {
 }
 .edui-notadd  .edui-pastecontainer .edui-button  .edui-state-hover .edui-plaintxticon{
     background-position: -72px -34px;
+}
+/*可以在这里添加你自己的css*/
+img {
+    max-width: 100%;
+    height: auto;
 }

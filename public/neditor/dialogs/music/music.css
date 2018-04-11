@@ -33,7 +33,6 @@
 .m-z{float:left;width:142px;}
 .m-try-t{float: left;width: 60px;;}
 
-/*.m-try{float:left;width:20px;height:20px;background:url('http://static.tieba.baidu.com/tb/editor/images/try_music.gif') no-repeat ;}*/
 .m-try {
     width: 4px;
     display: flex;
@@ -43,7 +42,6 @@
     border-bottom: 5px solid transparent;
     margin-top: 8px;
 }
-/*.m-trying{float:left;width:20px;height:20px;background:url('http://static.tieba.baidu.com/tb/editor/images/stop_music.gif') no-repeat ;}*/
 
 .m-trying {
     display: flex;
