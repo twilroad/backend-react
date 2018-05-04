@@ -144,6 +144,8 @@ class Article extends React.Component<Props, State> {
         if (props.location.state) {
             typeId = props.location.state.typeId;
             typeName = props.location.state.typeName;
+            localStorage.setItem('type_id', typeId);
+            localStorage.setItem('type_name', typeName);
         }
         this.state = {
             right: false,
@@ -206,6 +208,8 @@ class Article extends React.Component<Props, State> {
             page = 1;
         }
         if (localStorage.getItem('articleType')) {
+            localStorage.removeItem('type_id');
+            localStorage.removeItem('type_name');
             const type = localStorage.getItem('articleType');
             if (type) {
                 const ty = JSON.parse(type);
@@ -312,7 +316,7 @@ class Article extends React.Component<Props, State> {
                     });
                 }
             }
-        } else if (this.state.classifyId !== 1) {
+        } else if (localStorage.getItem('type_id')) {
             axios.post(`${this.props.hosts}graphql?`, {
                 query: `
                     query {
@@ -320,7 +324,7 @@ class Article extends React.Component<Props, State> {
                             limitNum: 10,
                             pages: ${page},
                             keyWords: "",
-                            classifyId: ${this.state.classifyId},
+                            classifyId: ${localStorage.getItem('type_id')},
                         }){
                             pagination{
                                 totalItems,
@@ -351,6 +355,8 @@ class Article extends React.Component<Props, State> {
                         totalItems: data.pagination.totalItems,
                         rowsPerPage: data.pagination.pageSize,
                         currentPage: data.pagination.currentPage - 1,
+                        classify: localStorage.getItem('type_name'),
+                        classifyId: localStorage.getItem('type_id'),
                         right: true,
                     });
                 }
@@ -666,6 +672,8 @@ class Article extends React.Component<Props, State> {
         this.refreshPage();
         localStorage.removeItem('currentPage');
         localStorage.removeItem('articleType');
+        localStorage.removeItem('type_id');
+        localStorage.removeItem('type_name');
     };
     handleSubmitSearch = () => {
         localStorage.removeItem('currentPage');
