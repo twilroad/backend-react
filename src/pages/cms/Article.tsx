@@ -191,7 +191,14 @@ class Article extends React.Component<Props, State> {
             pageStatus: false,
         };
     }
+    componentWillUnmount() {
+        window.localStorage.removeItem('preUrl');
+    }
     componentDidMount() {
+        if (localStorage.getItem('preUrl') === null) {
+            localStorage.removeItem('currentPage');
+            localStorage.removeItem('articleType');
+        }
         let page;
         if (localStorage.getItem('currentPage')) {
             page = localStorage.getItem('currentPage');
@@ -247,7 +254,7 @@ class Article extends React.Component<Props, State> {
                                 totalItems: data.pagination.totalItems,
                                 rowsPerPage: data.pagination.pageSize,
                                 currentPage: data.pagination.currentPage - 1,
-                                right: true,
+                                right: false,
                                 keyword: ty.keyword,
                                 classify: ty.classify,
                                 classifyId: ty.classifyId,
@@ -295,7 +302,7 @@ class Article extends React.Component<Props, State> {
                                 totalItems: data.pagination.totalItems,
                                 rowsPerPage: data.pagination.pageSize,
                                 currentPage: data.pagination.currentPage - 1,
-                                right: true,
+                                right: false,
                                 keyword: ty.keyword,
                                 classify: ty.classify,
                                 classifyId: ty.classifyId,
@@ -311,7 +318,7 @@ class Article extends React.Component<Props, State> {
                     query {
                         getArticlesLimit(serachArticle: {
                             limitNum: 10,
-                            pages: 1,
+                            pages: ${page},
                             keyWords: "",
                             classifyId: ${this.state.classifyId},
                         }){
@@ -354,7 +361,7 @@ class Article extends React.Component<Props, State> {
                     query {
                         getArticlesLimit(getArticleAll: {
                             limitNum: 10,
-                            pages: 1,
+                            pages: ${page},
                         }){
                             pagination{
                                 totalItems,
@@ -657,8 +664,11 @@ class Article extends React.Component<Props, State> {
             classify: '',
         });
         this.refreshPage();
+        localStorage.removeItem('currentPage');
+        localStorage.removeItem('articleType');
     };
     handleSubmitSearch = () => {
+        localStorage.removeItem('currentPage');
         let param = false;
         if (this.state.isTop === '2') {
             param = false;
@@ -703,7 +713,7 @@ class Article extends React.Component<Props, State> {
                         list: data.articles,
                         totalItems: data.pagination.totalItems,
                         rowsPerPage: data.pagination.pageSize,
-                        currentPage: data.pagination.currentPage - 1,
+                        currentPage: 0,
                         right: !this.state.right,
                         pageStatus: true,
                     });
@@ -755,13 +765,13 @@ class Article extends React.Component<Props, State> {
                 }
             });
         }
-        // const typeData = {
-        //     classify: this.state.classify,
-        //     classifyId: this.state.classifyId,
-        //     keyword: this.state.keyword,
-        //     topPlace: this.state.isTop,
-        // };
-        // localStorage.setItem('articleType', JSON.stringify(typeData));
+        const typeData = {
+            classify: this.state.classify,
+            classifyId: this.state.classifyId,
+            keyword: this.state.keyword,
+            topPlace: this.state.isTop,
+        };
+        localStorage.setItem('articleType', JSON.stringify(typeData));
     };
     handlePageClick = (data: any) => {
         let param = false;
@@ -899,7 +909,7 @@ class Article extends React.Component<Props, State> {
                 }
             });
         }
-        // localStorage.setItem('currentPage', data.selected + 1);
+        localStorage.setItem('currentPage', data.selected + 1);
     };
     handleChangeType = (value: any, select: any) => {
         this.setState({
@@ -908,7 +918,7 @@ class Article extends React.Component<Props, State> {
         });
     };
     render() {
-        const { rowsPerPage, totalItems, list, modalType, openMessageTip, message } = this.state;
+        const { rowsPerPage, totalItems, currentPage, list, modalType, openMessageTip, message } = this.state;
         return (
             <div
                 className={
@@ -1047,6 +1057,7 @@ class Article extends React.Component<Props, State> {
                                 breakLabel={<a href="javascript:;">...</a>}
                                 breakClassName={'break-me'}
                                 pageCount={totalItems / rowsPerPage}
+                                initialPage={currentPage}
                                 marginPagesDisplayed={2}
                                 pageRangeDisplayed={2}
                                 onPageChange={this.handlePageClick}

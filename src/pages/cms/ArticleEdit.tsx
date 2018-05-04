@@ -20,6 +20,7 @@ import { CircularProgress } from 'material-ui/Progress';
 import IconButton from 'material-ui/IconButton';
 import PhotoCamera from 'material-ui-icons/PhotoCamera';
 import { RootState } from '../../redux/reducers';
+import { History } from 'history';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 
@@ -100,6 +101,7 @@ type State = {
     pictureName: string,
     type: string,
     imgUrl: string,
+    preRoute: string,
 };
 
 interface Props extends WithStyles<keyof typeof styles> {
@@ -119,6 +121,7 @@ class ArticleEdit extends React.Component<Props, State> {
             proId = str.substring(str.lastIndexOf('\/') + 1, str.length);
         }
         this.state = {
+            preRoute: str,
             name: '',
             img: '',
             baseImg: '',
@@ -179,6 +182,9 @@ class ArticleEdit extends React.Component<Props, State> {
             type: '',
             imgUrl: '',
         };
+    }
+    componentWillUnmount() {
+        window.localStorage.setItem('preUrl', this.state.preRoute);
     }
     componentDidMount() {
         if (this.state.pageType !== '1') {
@@ -408,6 +414,7 @@ class ArticleEdit extends React.Component<Props, State> {
                                 errorMessage: '提交成功!',
                             },
                         );
+                        self.props.history.push('/cms/article');
                     } else if (!data.Continue) {
                         self.setState(
                             {
@@ -460,6 +467,7 @@ class ArticleEdit extends React.Component<Props, State> {
                                 errorMessage: '修改信息成功!',
                             },
                         );
+                        self.props.history.push('/cms/article');
                     } else if (!data.Continue) {
                         self.setState(
                             {
